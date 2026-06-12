@@ -47,6 +47,11 @@
     </style>
 </head>
 <body class="auth-page d-flex align-items-center">
+    <div class="position-absolute top-0 end-0 p-3">
+        <a href="{{ url('/dashboard') }}" class="btn btn-sm btn-light">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
     <div class="container py-5">
         @yield('content')
     </div>

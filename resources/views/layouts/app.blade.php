@@ -53,7 +53,17 @@
                     </div>
                 </div>
 
-                <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom"></nav>
+                <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
+                    <div class="container-fluid">
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item">
+                                <a href="{{ url('/login') }}" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-sign-out-alt"></i> Logout (Test Login)
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
             </div>
 
             <div class="container">
