@@ -12,24 +12,10 @@
                     <p class="text-white-50">Sign up to manage students, approvals, and OJT flow.</p>
                 </div>
 
-                <form>
-                    <div class="mb-3">
-                        <label class="form-label text-white-75">Name</label>
-                        <input type="text" class="form-control" placeholder="Alex Rivera" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-white-75">Work Email</label>
-                        <input type="email" class="form-control" placeholder="coordinator@internlink.com" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-white-75">Password</label>
-                        <input type="password" class="form-control" placeholder="Create password" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-white-75">Confirm Password</label>
-                        <input type="password" class="form-control" placeholder="Confirm password" />
-                    </div>
-                    <button type="submit" class="btn btn-success btn-round w-100">Register as Coordinator</button>
+                <form method="POST" action="{{ route('register.role', ['role' => 'coordinator']) }}">
+                    @csrf
+                    <p class="text-white-50">No database registration is required. Continue as a Coordinator to use teacher workflows.</p>
+                    <button type="submit" class="btn btn-success btn-round w-100">Continue as Coordinator</button>
                 </form>
 
                 <div class="text-center text-white-50 mt-4">

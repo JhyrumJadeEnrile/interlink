@@ -9,26 +9,13 @@
             <div class="card-body">
                 <div class="mb-4 text-center">
                     <h3 class="text-white">Supervisor Sign In</h3>
-                    <p class="text-white-50">Review trainees, verify hours, and give workplace feedback.</p>
+                    <p class="text-white-50">Review trainees, verify hours, and manage company profile details.</p>
                 </div>
 
-                <form>
-                    <div class="mb-3">
-                        <label class="form-label text-white-75">Company Email</label>
-                        <input type="email" class="form-control" placeholder="supervisor@company.com" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-white-75">Password</label>
-                        <input type="password" class="form-control" placeholder="Enter password" />
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <div class="form-check text-white-75">
-                            <input class="form-check-input" type="checkbox" id="rememberSupervisor" />
-                            <label class="form-check-label" for="rememberSupervisor">Remember this device</label>
-                        </div>
-                        <a href="{{ url('/forgot-password') }}" class="text-white-75">Forgot password?</a>
-                    </div>
-                    <button type="submit" class="btn btn-warning btn-round w-100">Sign In as Supervisor</button>
+                <form method="POST" action="{{ route('login.role', ['role' => 'supervisor']) }}">
+                    @csrf
+                    <p class="text-white-50">No database is required. Continue as a Supervisor to access approval workflows.</p>
+                    <button type="submit" class="btn btn-warning btn-round w-100">Continue as Supervisor</button>
                 </form>
 
                 <div class="text-center text-white-50 mt-4">

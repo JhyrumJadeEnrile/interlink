@@ -62,6 +62,23 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-4">
+                <div class="card auth-card p-4 h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between mb-4">
+                            <div>
+                                <h5 class="text-white">Admin</h5>
+                                <p class="text-white-50 mb-0">Manage account links, assign supervisors, and configure student relationships.</p>
+                            </div>
+                            <div class="icon bg-danger rounded-circle p-3 text-white">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                        </div>
+                        <a href="{{ url('/login/admin') }}" class="btn btn-danger btn-round w-100 mb-2">Log In</a>
+                        <a href="{{ url('/login') }}" class="btn btn-outline-light btn-round w-100">Contact your administrator</a>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="text-center mt-4">

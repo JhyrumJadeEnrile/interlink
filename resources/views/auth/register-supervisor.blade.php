@@ -12,24 +12,10 @@
                     <p class="text-white-50">Register to supervise trainees and verify workplace hours.</p>
                 </div>
 
-                <form>
-                    <div class="mb-3">
-                        <label class="form-label text-white-75">Supervisor Name</label>
-                        <input type="text" class="form-control" placeholder="Morgan Lee" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-white-75">Company Email</label>
-                        <input type="email" class="form-control" placeholder="supervisor@workplace.com" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-white-75">Password</label>
-                        <input type="password" class="form-control" placeholder="Create password" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-white-75">Confirm Password</label>
-                        <input type="password" class="form-control" placeholder="Confirm password" />
-                    </div>
-                    <button type="submit" class="btn btn-warning btn-round w-100">Register as Supervisor</button>
+                <form method="POST" action="{{ route('register.role', ['role' => 'supervisor']) }}">
+                    @csrf
+                    <p class="text-white-50">No database registration is required. Continue as a Supervisor to use approval workflows.</p>
+                    <button type="submit" class="btn btn-warning btn-round w-100">Continue as Supervisor</button>
                 </form>
 
                 <div class="text-center text-white-50 mt-4">

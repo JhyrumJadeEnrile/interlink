@@ -15,11 +15,37 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        User::factory()->create([
+            'name' => 'Admin User',
+            'email' => 'admin@internlink.com',
+            'role' => 'admin',
+            'password' => 'password',
+        ]);
+
+        $teacher = User::factory()->create([
+            'name' => 'Lina Coordinator',
+            'email' => 'coordinator@internlink.com',
+            'role' => 'coordinator',
+            'password' => 'password',
+        ]);
+
+        $supervisor = User::factory()->create([
+            'name' => 'Sam Supervisor',
+            'email' => 'supervisor@workplace.com',
+            'role' => 'supervisor',
+            'company_name' => 'Acme Training Services',
+            'department' => 'Operations',
+            'password' => 'password',
+        ]);
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Ava Student',
+            'email' => 'student@school.edu',
+            'role' => 'student',
+            'teacher_id' => $teacher->id,
+            'supervisor_id' => $supervisor->id,
+            'required_hours' => 240,
+            'password' => 'password',
         ]);
     }
 }

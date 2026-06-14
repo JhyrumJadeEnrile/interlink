@@ -9,26 +9,13 @@
             <div class="card-body">
                 <div class="mb-4 text-center">
                     <h3 class="text-white">Student Sign In</h3>
-                    <p class="text-white-50">Access your training logs and daily hours.</p>
+                    <p class="text-white-50">Access your training logs and assigned supervisor information.</p>
                 </div>
 
-                <form>
-                    <div class="mb-3">
-                        <label class="form-label text-white-75">School Email</label>
-                        <input type="email" class="form-control" placeholder="student@school.edu" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-white-75">Password</label>
-                        <input type="password" class="form-control" placeholder="Enter password" />
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <div class="form-check text-white-75">
-                            <input class="form-check-input" type="checkbox" id="rememberStudent" />
-                            <label class="form-check-label" for="rememberStudent">Remember me</label>
-                        </div>
-                        <a href="{{ url('/forgot-password') }}" class="text-white-75">Forgot password?</a>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-round w-100">Sign In as Student</button>
+                <form method="POST" action="{{ route('login.role', ['role' => 'student']) }}">
+                    @csrf
+                    <p class="text-white-50">No database is required. Continue as a Student to access the student workflow.</p>
+                    <button type="submit" class="btn btn-primary btn-round w-100">Continue as Student</button>
                 </form>
 
                 <div class="text-center text-white-50 mt-4">

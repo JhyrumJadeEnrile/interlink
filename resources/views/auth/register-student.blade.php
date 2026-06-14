@@ -12,24 +12,10 @@
                     <p class="text-white-50">Create your InternLink account to start logging OJT hours.</p>
                 </div>
 
-                <form>
-                    <div class="mb-3">
-                        <label class="form-label text-white-75">Full Name</label>
-                        <input type="text" class="form-control" placeholder="Jane Doe" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-white-75">School Email</label>
-                        <input type="email" class="form-control" placeholder="student@school.edu" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-white-75">Password</label>
-                        <input type="password" class="form-control" placeholder="Create password" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-white-75">Confirm Password</label>
-                        <input type="password" class="form-control" placeholder="Confirm password" />
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-round w-100">Register as Student</button>
+                <form method="POST" action="{{ route('register.role', ['role' => 'student']) }}">
+                    @csrf
+                    <p class="text-white-50">No database registration is required. Continue as a Student to use the student workflow.</p>
+                    <button type="submit" class="btn btn-primary btn-round w-100">Continue as Student</button>
                 </form>
 
                 <div class="text-center text-white-50 mt-4">
