@@ -103,10 +103,10 @@ class AuthController extends Controller
     {
         return match ($role) {
             'student' => redirect()->route('student.timelogs'),
-            'coordinator' => redirect()->route('teacher.students'),
-            'supervisor' => redirect()->route('supervisor.timelogs.pending'),
+            'coordinator' => redirect()->route('teacher.dashboard'),
+            'supervisor' => redirect()->route('supervisor.dashboard'),
             'admin' => redirect()->route('admin.student-assignments'),
-            default => redirect()->route('dashboard'),
+            default => redirect()->route('admin.dashboard'),
         };
     }
 
