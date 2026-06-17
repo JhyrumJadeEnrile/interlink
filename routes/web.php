@@ -46,12 +46,14 @@ Route::get('/dashboard', fn () => view('admin.dashboard'))->name('admin.dashboar
     });
 
     Route::prefix('teacher')->group(function () {
+        Route::get('/dashboard', fn () => view('teacher.dashboard'))->name('teacher.dashboard');
         Route::get('/students', [TeacherController::class, 'students'])->name('teacher.students');
         Route::post('/students/required-hours', [TeacherController::class, 'updateRequiredHours'])->name('teacher.required-hours.update');
         Route::get('/approved-logs', [TeacherController::class, 'approvedLogs'])->name('teacher.approved-logs');
     });
 
     Route::prefix('supervisor')->group(function () {
+        Route::get('/dashboard', fn () => view('supervisor.dashboard'))->name('supervisor.dashboard');
         Route::get('/timelogs/pending', [SupervisorController::class, 'pendingLogs'])->name('supervisor.timelogs.pending');
         Route::post('/timelogs/{timeLog}/approve', [SupervisorController::class, 'approveLog'])->name('supervisor.timelogs.approve');
         Route::post('/timelogs/{timeLog}/reject', [SupervisorController::class, 'rejectLog'])->name('supervisor.timelogs.reject');
