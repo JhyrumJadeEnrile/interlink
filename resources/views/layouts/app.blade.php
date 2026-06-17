@@ -21,7 +21,7 @@
         });
     </script>
 
-     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/plugins.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/kaiadmin.min.css') }}">
@@ -56,11 +56,37 @@
                 <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
                     <div class="container-fluid">
                         <ul class="navbar-nav ms-auto">
+                            @auth
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                                    <i class="fas fa-user-circle"></i>
+                                    {{ Auth::user()->name }}
+                                    <span class="badge bg-secondary ms-1">{{ session('role') }}</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <span class="dropdown-item-text text-muted small">
+                                            {{ Auth::user()->email }}
+                                        </span>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form method="POST" action="{{ route('logout') }}">
+                                            @csrf
+                                            <button type="submit" class="dropdown-item text-danger">
+                                                <i class="fas fa-sign-out-alt"></i> Logout
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                            @else
                             <li class="nav-item">
-                                <a href="{{ url('/login') }}" class="btn btn-sm btn-danger">
-                                    <i class="fas fa-sign-out-alt"></i> Logout (Test Login)
+                                <a href="{{ url('/login') }}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-sign-in-alt"></i> Login
                                 </a>
                             </li>
+                            @endauth
                         </ul>
                     </div>
                 </nav>

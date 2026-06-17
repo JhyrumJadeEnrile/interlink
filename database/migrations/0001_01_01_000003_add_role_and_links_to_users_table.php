@@ -7,22 +7,23 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     public function up(): void
-    {
-        Schema::table('users', function (Blueprint $table) {
+{
+    Schema::table('users', function (Blueprint $table) {
+        if (!Schema::hasColumn('users', 'role')) {
             $table->string('role')->default('student');
+        }
+        if (!Schema::hasColumn('users', 'teacher_id')) {
             $table->foreignId('teacher_id')->nullable()->constrained('users')->nullOnDelete();
+        }
+        if (!Schema::hasColumn('users', 'supervisor_id')) {
             $table->foreignId('supervisor_id')->nullable()->constrained('users')->nullOnDelete();
+        }
+        if (!Schema::hasColumn('users', 'company_name')) {
             $table->string('company_name')->nullable();
+        }
+        if (!Schema::hasColumn('users', 'department')) {
             $table->string('department')->nullable();
-        });
-    }
-
-    public function down(): void
-    {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign(['teacher_id']);
-            $table->dropForeign(['supervisor_id']);
-            $table->dropColumn(['role', 'teacher_id', 'supervisor_id', 'company_name', 'department']);
-        });
-    }
+        }
+    });
+}
 };

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -15,57 +17,35 @@ class AuthController extends Controller
         'admin',
     ];
 
-    private function resolveRoleUser(string $role): User
-    {
-        $defaults = [
-            'student' => [
-                'name' => 'Student User',
-                'email' => 'student@internlink.local',
-                'password' => 'password',
-            ],
-            'coordinator' => [
-                'name' => 'Coordinator User',
-                'email' => 'coordinator@internlink.local',
-                'password' => 'password',
-            ],
-            'supervisor' => [
-                'name' => 'Supervisor User',
-                'email' => 'supervisor@internlink.local',
-                'password' => 'password',
-            ],
-            'admin' => [
-                'name' => 'Admin User',
-                'email' => 'admin@internlink.local',
-                'password' => 'password',
-            ],
-        ];
-
-        $attributes = ['role' => $role];
-        $values = $defaults[$role] ?? $defaults['student'];
-
-        if (! empty($values['password'])) {
-            $values['password'] = bcrypt($values['password']);
-        }
-
-        return User::firstOrCreate($attributes, $values);
-    }
-
     public function showLoginForm(string $role)
     {
-        if (! in_array($role, self::ALLOWED_ROLES, true)) {
+        if (!in_array($role, self::ALLOWED_ROLES, true)) {
             abort(404);
         }
-
         return view("auth.login-{$role}");
     }
 
     public function login(Request $request, string $role)
     {
-        if (! in_array($role, self::ALLOWED_ROLES, true)) {
+        if (!in_array($role, self::ALLOWED_ROLES, true)) {
             abort(404);
         }
 
-        $user = $this->resolveRoleUser($role);
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        $user = User::where('email', $request->email)
+                    ->where('role', $role)
+                    ->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => 'Invalid credentials or wrong role.',
+            ]);
+        }
+
         Auth::login($user);
         $request->session()->put('role', $role);
 
@@ -74,25 +54,50 @@ class AuthController extends Controller
 
     public function showRegisterForm(string $role)
     {
-        if (! in_array($role, self::ALLOWED_ROLES, true)) {
+        if (!in_array($role, self::ALLOWED_ROLES, true)) {
             abort(404);
         }
-
         return view("auth.register-{$role}");
     }
 
-    public function register(Request $request, string $role)
-    {
-        if (! in_array($role, self::ALLOWED_ROLES, true)) {
-            abort(404);
-        }
-
-        $user = $this->resolveRoleUser($role);
-        Auth::login($user);
-        $request->session()->put('role', $role);
-
-        return $this->redirectForRole($role);
+   public function register(Request $request, string $role)
+{
+    if (!in_array($role, self::ALLOWED_ROLES, true)) {
+        abort(404);
     }
+
+    $rules = [
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email',
+        'password' => 'required|min:8|confirmed',
+    ];
+
+    if ($role === 'supervisor') {
+        $rules['company_name'] = 'required|string|max:255';
+        $rules['department'] = 'required|string|max:255';
+    }
+
+    $request->validate($rules);
+
+    $data = [
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+        'role' => $role,
+    ];
+
+    if ($role === 'supervisor') {
+        $data['company_name'] = $request->company_name;
+        $data['department'] = $request->department;
+    }
+
+    $user = User::create($data);
+
+    Auth::login($user);
+    $request->session()->put('role', $role);
+
+    return $this->redirectForRole($role);
+}
 
     private function redirectForRole(string $role)
     {

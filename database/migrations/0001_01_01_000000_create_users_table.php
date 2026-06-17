@@ -17,6 +17,11 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            
+            // 🌟 IDAGDAG ITO PARA SA OJT SYSTEM ROLES:
+            // Default na 'student' para kung mag-register ang estudyante, kusa nang student ang role nila.
+            $table->string('role')->default('student'); // student, supervisor, admin
+            
             $table->rememberToken();
             $table->timestamps();
         });

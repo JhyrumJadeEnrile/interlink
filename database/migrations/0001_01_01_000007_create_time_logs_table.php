@@ -14,8 +14,8 @@ return new class extends Migration
             $table->foreignId('supervisor_id')->nullable()->constrained('users')->nullOnDelete();
             $table->date('date');
             $table->dateTime('time_in');
-            $table->dateTime('time_out');
-            $table->unsignedInteger('duration_minutes');
+            $table->dateTime('time_out')->nullable();
+            $table->unsignedInteger('duration_minutes')->nullable();
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 10, 7)->nullable();
             $table->string('photo_path')->nullable();

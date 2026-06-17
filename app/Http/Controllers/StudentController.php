@@ -98,20 +98,20 @@ class StudentController extends Controller
         $validated = $request->validate([
             'date' => ['required', 'date'],
             'time_in' => ['required', 'date_format:Y-m-d\TH:i'],
-            'time_out' => ['required', 'date_format:Y-m-d\TH:i'],
+            'time_out' => ['nullable', 'date_format:Y-m-d\TH:i'],
             'latitude' => ['nullable', 'numeric'],
             'longitude' => ['nullable', 'numeric'],
             'photo' => ['nullable', 'image', 'max:5120'],
         ]);
 
         $timeIn = Carbon::parse($validated['time_in']);
-        $timeOut = Carbon::parse($validated['time_out']);
+        $timeOut = !empty($validated['time_out']) ? Carbon::parse($validated['time_out']) : null;
 
-        if ($timeOut->lessThanOrEqualTo($timeIn)) {
+        if ($timeOut && $timeOut->lessThanOrEqualTo($timeIn)) {
             return back()->withErrors(['time_out' => 'Time-out must be after Time-in.'])->withInput();
         }
 
-        $duration = $timeOut->diffInMinutes($timeIn);
+        $duration = $timeOut ? $timeOut->diffInMinutes($timeIn) : 0;
         $student = $request->user();
         $supervisorId = $student->supervisor_id;
 

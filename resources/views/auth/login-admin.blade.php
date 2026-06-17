@@ -12,10 +12,31 @@
                     <p class="text-white-50">Sign in as Admin to manage student assignments and supervisor profiles.</p>
                 </div>
 
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        {{ $errors->first() }}
+                    </div>
+                @endif
+
                 <form method="POST" action="{{ route('login.role', ['role' => 'admin']) }}">
                     @csrf
-                    <p class="text-white-50">No database is required. Continue as Admin to access the admin student assignment area.</p>
-                    <button type="submit" class="btn btn-success btn-round w-100">Continue as Admin</button>
+
+                    <div class="mb-3">
+                        <label class="text-white-50">Email Address</label>
+                        <input type="email" name="email" class="form-control"
+                               value="{{ old('email') }}"
+                               placeholder="Enter your email" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="text-white-50">Password</label>
+                        <input type="password" name="password" class="form-control"
+                               placeholder="Enter your password" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-round w-100">
+                        Sign In as Admin
+                    </button>
                 </form>
 
                 <div class="text-center mt-3">
