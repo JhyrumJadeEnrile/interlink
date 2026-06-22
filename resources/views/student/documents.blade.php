@@ -3,207 +3,235 @@
 @section('title', 'OJT Documents | InternLink')
 
 @section('content')
-<div class="container">
-    <div class="page-inner">
-        <div class="page-header">
-            <h3 class="fw-bold mb-3">OJT Documents</h3>
-            <ul class="breadcrumbs mb-3">
-                <li class="nav-home">
-                    <a href="#">
-                        <i class="icon-home text-primary"></i>
-                    </a>
-                </li>
-                <li class="separator">
-                    <i class="icon-arrow-right"></i>
-                </li>
-                <li class="nav-item">
-                    <a href="#">My OJT</a>
-                </li>
-                <li class="separator">
-                    <i class="icon-arrow-right"></i>
-                </li>
-                <li class="nav-item">
-                    <a href="#">Documents</a>
-                </li>
-            </ul>
-        </div>
 
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+{{-- Page Header --}}
+<div class="page-header">
+    <h3 class="fw-bold mb-1">OJT Documents</h3>
+    <ul class="breadcrumbs mb-3">
+        <li class="nav-home"><a href="{{ url('/dashboard') }}"><i class="icon-home"></i></a></li>
+        <li class="separator"><i class="icon-arrow-right"></i></li>
+        <li class="nav-item"><a href="#">My OJT</a></li>
+        <li class="separator"><i class="icon-arrow-right"></i></li>
+        <li class="nav-item"><a href="#">Documents</a></li>
+    </ul>
+</div>
+
+{{-- Alerts --}}
+@if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2" role="alert">
+        <i class="fas fa-check-circle"></i>
+        <span>{{ session('success') }}</span>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+    </div>
+@endif
+@if ($errors->any())
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong><i class="fas fa-exclamation-triangle me-1"></i> Please fix the following:</strong>
+        <ul class="mb-0 mt-1 ps-3">
+            @foreach ($errors->all() as $error)
+                <li style="font-size:13px;">{{ $error }}</li>
+            @endforeach
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
+
+<div class="row g-4">
+
+    {{-- ── Upload Card ── --}}
+    <div class="col-md-5">
+        <div class="card card-round h-100">
+            <div class="card-header d-flex align-items-center gap-2">
+                <span style="width:32px;height:32px;border-radius:8px;background:rgba(88,103,221,.12);display:flex;align-items:center;justify-content:center;">
+                    <i class="fas fa-cloud-upload-alt" style="color:#5867dd;font-size:15px;"></i>
+                </span>
+                <span class="card-title mb-0">Upload Control</span>
             </div>
-        @endif
+            <div class="card-body">
+                <form method="POST" action="{{ route('student.documents.upload') }}" enctype="multipart/form-data">
+                    @csrf
 
-        @if ($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong class="d-block mb-1"><i class="fas fa-exclamation-triangle me-2"></i> Action Required:</strong>
-                <ul class="mb-0 ps-3">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" style="font-size:12px;color:#555;">Document Classification</label>
+                        <select name="document_type" class="form-select" style="height:40px;" required>
+                            <option value="" disabled selected>Choose type…</option>
+                            <option value="Resume">Resume / CV</option>
+                            <option value="Consent Form">Parental Consent Form</option>
+                            <option value="Internship Agreement">MOA / Internship Agreement</option>
+                        </select>
+                    </div>
 
-        <div class="row">
-            <div class="col-md-5">
-                <div class="card card-round">
-                    <div class="card-header">
-                        <div class="card-head-row">
-                            <div class="card-title"><i class="fas fa-cloud-upload-alt text-primary me-2"></i>Upload Control</div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" style="font-size:12px;color:#555;">Select File</label>
+                        <div class="doc-dropzone position-relative text-center p-4" id="doc-drop-area">
+                            <i class="fas fa-file-upload fs-2 mb-2 d-block" id="doc-icon" style="color:#ccc;"></i>
+                            <span id="doc-file-text" style="font-size:13px;color:#aaa;">Click to attach file</span>
+                            <div style="font-size:11px;color:#bbb;margin-top:4px;">PDF, DOC, DOCX — up to 10 MB</div>
+                            <input type="file" name="document" id="doc-file-input"
+                                   class="position-absolute top-0 start-0 w-100 h-100 opacity-0"
+                                   style="cursor:pointer;" accept=".pdf,.doc,.docx" required />
                         </div>
                     </div>
-                    <div class="card-body">
-                        <form method="POST" action="{{ route('student.documents.upload') }}" enctype="multipart/form-data">
-                            @csrf
 
-                            <div class="form-group px-0 py-2">
-                                <label for="document_type" class="fw-semibold">Document Classification</label>
-                                <select id="document_type" name="document_type" class="form-select form-control-behavior" required>
-                                    <option value="" disabled selected>Choose type...</option>
-                                    <option value="Resume">Resume / CV</option>
-                                    <option value="Consent Form">Parental Consent Form</option>
-                                    <option value="Internship Agreement">MOA / Internship Agreement</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group px-0 py-2">
-                                <label class="fw-semibold">Select File</label>
-                                <div class="custom-kai-file-input position-relative border rounded p-3 text-center bg-light transition-all">
-                                    <i class="fas fa-file-pdf fs-3 text-muted mb-2 d-block"></i>
-                                    <span id="file-chosen-text" class="text-secondary small d-block text-truncate fw-medium">Click to attach file</span>
-                                    <input type="file" name="document" class="position-absolute top-0 start-0 w-100 h-100 opacity-0 cursor-pointer" accept=".pdf,.doc,.docx" id="file-native-input" required />
-                                </div>
-                                <small class="form-text text-muted">Supports PDF, DOC, DOCX up to 10MB</small>
-                            </div>
-
-                            <div class="py-2">
-                                <button type="submit" class="btn btn-primary btn-round w-100 fw-bold">
-                                    <i class="fas fa-upload me-2"></i>Process Document
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-7">
-                <div class="card card-round">
-                    <div class="card-header">
-                        <div class="card-head-row justify-content-between align-items-center">
-                            <div class="card-title"><i class="fas fa-folder text-success me-2"></i>Document Registry</div>
-                            <span class="badge badge-neutral text-dark border rounded-pill px-3 py-1 fw-bold small">
-                                Files: {{ $documents->count() }}
-                            </span>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        @if ($documents->isEmpty())
-                            <div class="text-center py-5">
-                                <div class="avatar avatar-lg mb-3 mx-auto bg-light rounded-circle d-flex align-items-center justify-content-center">
-                                    <i class="fas fa-file-invoice text-muted fs-4"></i>
-                                </div>
-                                <h6 class="fw-bold text-dark mb-1">No uploaded records</h6>
-                                <p class="text-muted small px-4 mb-0">Use the upload tool to store and log your required forms.</p>
-                            </div>
-                        @else
-                            <div class="table-responsive">
-                                <table class="table table-head-bg-light align-middle mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th class="ps-4">Type</th>
-                                            <th>Filename</th>
-                                            <th class="pe-4 text-end">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($documents as $document)
-                                            <tr>
-                                                <td class="ps-4">
-                                                    <div class="d-flex align-items-center">
-                                                        <span class="badge badge-dot me-2
-                                                            {{ $document->document_type == 'Resume' ? 'bg-info' : '' }}
-                                                            {{ $document->document_type == 'Consent Form' ? 'bg-warning' : '' }}
-                                                            {{ $document->document_type == 'Internship Agreement' ? 'bg-success' : '' }}">
-                                                        </span>
-                                                        <span class="fw-bold text-dark">{{ $document->document_type }}</span>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <span class="text-secondary small text-truncate d-block max-w-220" title="{{ $document->filename }}">
-                                                        {{ $document->filename }}
-                                                    </span>
-                                                </td>
-                                                <td class="pe-4 text-end">
-                                                    <a href="{{ asset('storage/' . $document->file_path) }}" target="_blank" class="btn btn-icon btn-link btn-info btn-sm" title="View Document">
-                                                        <i class="fas fa-external-link-alt"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @endif
-                    </div>
-                </div>
+                    <button type="submit" class="btn btn-primary btn-round w-100 fw-semibold">
+                        <i class="fas fa-upload me-2"></i>Process Document
+                    </button>
+                </form>
             </div>
         </div>
     </div>
+
+    {{-- ── Registry Card ── --}}
+    <div class="col-md-7">
+        <div class="card card-round">
+            <div class="card-header d-flex align-items-center">
+                <span style="width:32px;height:32px;border-radius:8px;background:rgba(40,199,111,.12);display:flex;align-items:center;justify-content:center;" class="me-2">
+                    <i class="fas fa-folder-open" style="color:#28c76f;font-size:15px;"></i>
+                </span>
+                <span class="card-title mb-0">Document Registry</span>
+                <span class="ms-auto badge rounded-pill border" style="background:#f4f5f7;color:#555;font-size:11px;padding:5px 12px;">
+                    {{ $documents->count() }} {{ Str::plural('file', $documents->count()) }}
+                </span>
+            </div>
+            <div class="card-body p-0">
+
+                @if ($documents->isEmpty())
+                    <div class="text-center py-5 px-3">
+                        <div style="width:60px;height:60px;border-radius:50%;background:#f4f5f7;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;">
+                            <i class="fas fa-file-invoice" style="font-size:22px;color:#ccc;"></i>
+                        </div>
+                        <h6 class="fw-bold mb-1" style="color:#1a1a2e;">No uploaded records yet</h6>
+                        <p class="text-muted mb-0" style="font-size:13px;">Use the upload tool on the left to store your required OJT forms.</p>
+                    </div>
+                @else
+                    <div class="table-responsive">
+                        <table class="table table-head-bg-light align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4" style="width:30%;">Type</th>
+                                    <th style="width:45%;">Filename</th>
+                                    <th class="pe-4 text-end" style="width:25%;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($documents as $document)
+                                <tr>
+                                    <td class="ps-4 py-3">
+                                        <span class="badge rounded-pill px-3 py-1
+                                            @if($document->document_type === 'Resume') bg-info
+                                            @elseif($document->document_type === 'Consent Form') bg-warning text-dark
+                                            @else bg-success
+                                            @endif"
+                                            style="font-size:11px;">
+                                            {{ $document->document_type }}
+                                        </span>
+                                    </td>
+                                    <td class="py-3">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="fas fa-file-pdf" style="color:#e34c3a;font-size:16px;flex-shrink:0;"></i>
+                                            <span class="text-truncate" style="max-width:200px;font-size:13px;color:#555;" title="{{ $document->filename }}">
+                                                {{ $document->filename }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="pe-4 py-3 text-end">
+                                        {{-- View --}}
+                                        <a href="{{ asset('storage/' . $document->file_path) }}"
+                                           target="_blank"
+                                           class="btn btn-sm btn-icon btn-link"
+                                           title="View document"
+                                           style="color:#5867dd;">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+
+                                        {{-- Delete --}}
+                                        <button type="button"
+                                                class="btn btn-sm btn-icon btn-link text-danger ms-1"
+                                                title="Delete document"
+                                                onclick="confirmDeleteDoc({{ $document->id }}, '{{ addslashes($document->filename) }}')">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+
+                                        {{-- Hidden delete form --}}
+                                        <form id="delete-doc-{{ $document->id }}"
+                                              method="POST"
+                                              action="{{ route('student.documents.destroy', $document->id) }}"
+                                              class="d-none">
+                                            @csrf
+                                            @method('DELETE')
+                                        </form>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <style>
-    .cursor-pointer { cursor: pointer; }
-    .transition-all { transition: all 0.2s ease-in-out; }
-    .max-w-220 { max-width: 220px; }
-
-    .badge-dot {
-        display: inline-block;
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
+    .doc-dropzone {
+        border: 1.5px dashed #dde0ea;
+        border-radius: 10px;
+        background: #fafbfc;
+        transition: border-color .15s, background .15s;
+        cursor: pointer;
     }
-
-    /* Input select styling correction to fit form layout */
-    .form-control-behavior {
-        border-color: #ebedf2 !important;
-        height: 42px !important;
+    .doc-dropzone:hover,
+    .doc-dropzone.drag-over {
+        border-color: #5867dd;
+        background: rgba(88,103,221,.04);
     }
-
-    /* Unified look for the clean light drop layout wrapper */
-    .custom-kai-file-input {
-        border: 1px dashed #ebedf2 !important;
-    }
-    .custom-kai-file-input:hover {
-        border-color: #1572e8 !important;
-        background-color: #fafdff !important;
-    }
-    .custom-kai-file-input:hover i {
-        color: #1572e8 !important;
-    }
+    .doc-dropzone:hover #doc-icon,
+    .doc-dropzone.drag-over #doc-icon { color: #5867dd !important; }
 </style>
+@endsection
 
+@push('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const fileInput = document.getElementById('file-native-input');
-        const fileText = document.getElementById('file-chosen-text');
-        const iconWrapper = fileInput?.previousElementSibling?.previousElementSibling;
+document.addEventListener('DOMContentLoaded', function () {
+    const input   = document.getElementById('doc-file-input');
+    const text    = document.getElementById('doc-file-text');
+    const icon    = document.getElementById('doc-icon');
+    const dropArea = document.getElementById('doc-drop-area');
 
-        if(fileInput && fileText) {
-            fileInput.addEventListener('change', function() {
-                if(this.files && this.files.length > 0) {
-                    fileText.textContent = this.files[0].name;
-                    fileText.className = "text-primary small d-block text-truncate fw-bold";
-                    if(iconWrapper) iconWrapper.className = "fas fa-file-check fs-3 text-primary mb-2 d-block";
-                } else {
-                    fileText.textContent = "Click to attach file";
-                    fileText.className = "text-secondary small d-block text-truncate fw-medium";
-                    if(iconWrapper) iconWrapper.className = "fas fa-file-pdf fs-3 text-muted mb-2 d-block";
-                }
-            });
+    if (input) {
+        input.addEventListener('change', function () {
+            if (this.files.length) {
+                text.textContent = this.files[0].name;
+                text.style.color = '#5867dd';
+                text.style.fontWeight = '600';
+                icon.className = 'fas fa-file-check fs-2 mb-2 d-block';
+                icon.style.color = '#5867dd';
+            }
+        });
+    }
+
+    // Drag highlight
+    ['dragenter','dragover'].forEach(e => dropArea?.addEventListener(e, () => dropArea.classList.add('drag-over')));
+    ['dragleave','drop'].forEach(e => dropArea?.addEventListener(e, () => dropArea.classList.remove('drag-over')));
+});
+
+function confirmDeleteDoc(id, name) {
+    swal({
+        title: 'Delete document?',
+        text: '"' + name + '" will be permanently removed.',
+        icon: 'warning',
+        buttons: {
+            cancel: { text: 'Cancel', visible: true, className: 'btn btn-secondary btn-round' },
+            confirm: { text: 'Yes, delete it', className: 'btn btn-danger btn-round' }
+        },
+        dangerMode: true
+    }).then(function (confirmed) {
+        if (confirmed) {
+            document.getElementById('delete-doc-' + id).submit();
         }
     });
+}
 </script>
-@endsection
+@endpush

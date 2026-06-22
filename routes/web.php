@@ -37,12 +37,15 @@ Route::post('/admin/students/link', [AdminController::class, 'linkStudent'])
 Route::prefix('student')->group(function () {
     Route::get('/documents', [StudentController::class, 'documents'])->name('student.documents');
     Route::post('/documents', [StudentController::class, 'uploadDocument'])->name('student.documents.upload');
+    Route::delete('/documents/{id}', [StudentController::class, 'destroyDocument'])->name('student.documents.destroy');
 
     Route::get('/journals', [StudentController::class, 'journals'])->name('student.journals');
     Route::post('/journals', [StudentController::class, 'storeJournal'])->name('student.journals.store');
+    Route::delete('/journals/{id}', [StudentController::class, 'destroyJournal'])->name('student.journals.destroy');
 
     Route::get('/timelogs', [StudentController::class, 'timelogs'])->name('student.timelogs');
     Route::post('/timelogs', [StudentController::class, 'submitTimeLog'])->name('student.timelogs.store');
+    Route::delete('/timelogs/{id}', [StudentController::class, 'destroyTimeLog'])->name('student.timelogs.destroy');
 });
 
 Route::prefix('teacher')->group(function () {

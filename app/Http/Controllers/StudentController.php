@@ -53,6 +53,20 @@ class StudentController extends Controller
         return back()->with('success', 'Document uploaded successfully.');
     }
 
+    public function destroyDocument(Request $request, $id)
+    {
+        $this->authorizeStudent();
+
+        $document = OjtDocument::where('id', $id)
+                               ->where('student_id', $request->user()->id)
+                               ->firstOrFail();
+
+        Storage::disk('public')->delete($document->file_path);
+        $document->delete();
+
+        return back()->with('success', 'Document deleted successfully.');
+    }
+
     public function journals(Request $request)
     {
         $this->authorizeStudent();
@@ -81,6 +95,19 @@ class StudentController extends Controller
         return back()->with('success', 'Weekly journal submitted.');
     }
 
+    public function destroyJournal(Request $request, $id)
+    {
+        $this->authorizeStudent();
+
+        $journal = WeeklyJournal::where('id', $id)
+                                ->where('student_id', $request->user()->id)
+                                ->firstOrFail();
+
+        $journal->delete();
+
+        return back()->with('success', 'Journal entry deleted successfully.');
+    }
+
     public function timelogs(Request $request)
     {
         $this->authorizeStudent();
@@ -96,23 +123,22 @@ class StudentController extends Controller
         $this->authorizeStudent();
 
         $validated = $request->validate([
-            'date' => ['required', 'date'],
-            'time_in' => ['required', 'date_format:Y-m-d\TH:i'],
-            'time_out' => ['nullable', 'date_format:Y-m-d\TH:i'],
-            'latitude' => ['nullable', 'numeric'],
-            'longitude' => ['nullable', 'numeric'],
-            'photo' => ['nullable', 'image', 'max:5120'],
+            'date'      => ['required', 'date'],
+            'time_in'   => ['required', 'date_format:Y-m-d\TH:i'],
+            'time_out'  => ['nullable', 'date_format:Y-m-d\TH:i'],
+            'location'  => ['nullable', 'string', 'max:255'],
+            'photo'     => ['nullable', 'image', 'max:5120'],
         ]);
 
-        $timeIn = Carbon::parse($validated['time_in']);
+        $timeIn  = Carbon::parse($validated['time_in']);
         $timeOut = !empty($validated['time_out']) ? Carbon::parse($validated['time_out']) : null;
 
         if ($timeOut && $timeOut->lessThanOrEqualTo($timeIn)) {
             return back()->withErrors(['time_out' => 'Time-out must be after Time-in.'])->withInput();
         }
 
-        $duration = $timeOut ? $timeOut->diffInMinutes($timeIn) : 0;
-        $student = $request->user();
+        $duration   = $timeOut ? $timeIn->diffInMinutes($timeOut) : 0;
+        $student    = $request->user();
         $supervisorId = $student->supervisor_id;
 
         $photoPath = null;
@@ -121,18 +147,37 @@ class StudentController extends Controller
         }
 
         TimeLog::create([
-            'student_id' => $student->id,
-            'supervisor_id' => $supervisorId,
-            'date' => $validated['date'],
-            'time_in' => $timeIn,
-            'time_out' => $timeOut,
+            'student_id'       => $student->id,
+            'supervisor_id'    => $supervisorId,
+            'date'             => $validated['date'],
+            'time_in'          => $timeIn,
+            'time_out'         => $timeOut,
             'duration_minutes' => $duration,
-            'latitude' => $validated['latitude'],
-            'longitude' => $validated['longitude'],
-            'photo_path' => $photoPath,
-            'status' => TimeLog::STATUS_PENDING,
+            'latitude'         => null,
+            'longitude'        => null,
+            'location'         => $validated['location'] ?? null,
+            'photo_path'       => $photoPath,
+            'status'           => TimeLog::STATUS_PENDING,
         ]);
 
         return back()->with('success', 'Time log submitted for supervisor review.');
+    }
+
+    public function destroyTimeLog(Request $request, $id)
+    {
+        $this->authorizeStudent();
+
+        $log = TimeLog::where('id', $id)
+                      ->where('student_id', $request->user()->id)
+                      ->where('status', TimeLog::STATUS_PENDING)
+                      ->firstOrFail();
+
+        if ($log->photo_path) {
+            Storage::disk('public')->delete($log->photo_path);
+        }
+
+        $log->delete();
+
+        return back()->with('success', 'Time log deleted successfully.');
     }
 }

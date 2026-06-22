@@ -22,6 +22,7 @@ class TimeLog extends Model
         'duration_minutes',
         'latitude',
         'longitude',
+        'location',
         'photo_path',
         'status',
         'approved_by',
