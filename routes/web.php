@@ -7,6 +7,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SupervisorController;
 use App\Http\Controllers\SupervisorProfileController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/dashboard');
@@ -52,12 +53,18 @@ Route::prefix('teacher')->group(function () {
     Route::get('/students', [TeacherController::class, 'students'])->name('teacher.students');
     Route::post('/students/required-hours', [TeacherController::class, 'updateRequiredHours'])->name('teacher.required-hours.update');
     Route::get('/approved-logs', [TeacherController::class, 'approvedLogs'])->name('teacher.approved-logs');
+    
+    // 🌟 IDAGDAG ITO PARA SA COORDINATOR REDIRECT (Tugma sa AuthController)
+    Route::get('/dashboard', [TeacherController::class, 'students'])->name('teacher.dashboard');
 });
 
 Route::prefix('supervisor')->group(function () {
     Route::get('/timelogs/pending', [SupervisorController::class, 'pendingLogs'])->name('supervisor.timelogs.pending');
     Route::post('/timelogs/{timeLog}/approve', [SupervisorController::class, 'approveLog'])->name('supervisor.timelogs.approve');
     Route::post('/timelogs/{timeLog}/reject', [SupervisorController::class, 'rejectLog'])->name('supervisor.timelogs.reject');
+    
+    // 🌟 IDAGDAG ITO PARA SA SUPERVISOR REDIRECT (Tugma sa AuthController)
+    Route::get('/dashboard', [SupervisorController::class, 'pendingLogs'])->name('supervisor.dashboard');
 });
 
 Route::get('/reports/final', [ReportController::class, 'finalOjtReport'])->name('reports.final');
@@ -93,3 +100,10 @@ Route::view('/jsvectormap', 'admin.jsvectormap')->name('admin.jsvectormap');
 Route::view('/charts', 'admin.charts')->name('admin.charts');
 Route::view('/widgets', 'admin.widgets')->name('admin.widgets');
 Route::view('/sparkline', 'admin.sparkline')->name('admin.sparkline');
+
+// MESSAGING FEATURE ROUTES
+Route::middleware(['auth'])->group(function () {
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
+    Route::get('/chat/messages/{contact}', [ChatController::class, 'show'])->name('chat.show');
+    Route::post('/chat/send', [ChatController::class, 'store'])->name('chat.store');
+});

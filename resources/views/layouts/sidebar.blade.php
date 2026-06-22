@@ -65,6 +65,15 @@
                         <p>Documents</p>
                     </a>
                 </li>
+                <li class="nav-item {{ Request::is('chat') ? 'active' : '' }}">
+                    <a href="{{ route('chat.index') }}">
+                        <i class="fas fa-comments"></i>
+                        <p>Messages</p>
+                        @if(isset($unreadMessageCount) && $unreadMessageCount > 0)
+                            <span class="badge badge-danger style" style="background-color: #f25961; color: white; border-radius: 50%; padding: 3px 7px; font-size: 11px; float: right; margin-top: 2px;">{{ $unreadMessageCount }}</span>
+                        @endif
+                    </a>
+                </li>
                 @endif
 
                 {{-- ── COORDINATOR ── --}}
@@ -91,6 +100,15 @@
                         <p>Final OJT Report</p>
                     </a>
                 </li>
+                <li class="nav-item {{ Request::is('chat') ? 'active' : '' }}">
+                    <a href="{{ route('chat.index') }}">
+                        <i class="fas fa-comments"></i>
+                        <p>Messages</p>
+                        @if(isset($unreadMessageCount) && $unreadMessageCount > 0)
+                            <span class="badge badge-danger" style="background-color: #f25961; color: white; border-radius: 50%; padding: 3px 7px; font-size: 11px; float: right; margin-top: 2px;">{{ $unreadMessageCount }}</span>
+                        @endif
+                    </a>
+                </li>
                 @endif
 
                 {{-- ── SUPERVISOR ── --}}
@@ -109,6 +127,15 @@
                     <a href="{{ route('supervisor.profile.edit') }}">
                         <i class="fas fa-building"></i>
                         <p>Company Profile</p>
+                    </a>
+                </li>
+                <li class="nav-item {{ Request::is('chat') ? 'active' : '' }}">
+                    <a href="{{ route('chat.index') }}">
+                        <i class="fas fa-comments"></i>
+                        <p>Messages</p>
+                        @if(isset($unreadMessageCount) && $unreadMessageCount > 0)
+                            <span class="badge badge-danger" style="background-color: #f25961; color: white; border-radius: 50%; padding: 3px 7px; font-size: 11px; float: right; margin-top: 2px;">{{ $unreadMessageCount }}</span>
+                        @endif
                     </a>
                 </li>
                 @endif
