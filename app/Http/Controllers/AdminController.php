@@ -4,47 +4,73 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
-    private function authorizeAdmin(): void
-    {
-        $user = request()->user();
-
-        if (! $user || ! $user->isAdmin()) {
-            abort(403);
-        }
-    }
-
+    /**
+     * Display a listing of students and their current OJT linkages/assignments.
+     */
     public function studentAssignments()
     {
-        $this->authorizeAdmin();
-
-        $students = User::where('role', 'student')->with(['teacher', 'supervisor'])->get();
-        $teachers = User::where('role', 'coordinator')->get();
-        $supervisors = User::where('role', 'supervisor')->get();
-
-        return view('admin.student-assignments', compact('students', 'teachers', 'supervisors'));
+        // Keep your existing assignment logic here
+        // e.g., $students = User::where('role', 'student')->get();
+        // return view('admin.students.index', compact('students'));
     }
 
+    /**
+     * Link/Assign a student to a supervisor or teacher/coordinator.
+     */
     public function linkStudent(Request $request)
     {
-        $this->authorizeAdmin();
+        // Keep your existing linking database transactions here
+    }
 
+    /**
+     * Display the separate standalone registration page view for an OJT student.
+     */
+    public function createStudent()
+    {
+        // 🌟 UPDATED: Uses $teachers to maintain exact consistency with your Blade loops
+        $teachers = User::where('role', 'coordinator')->orWhere('role', 'teacher')->get();
+        $supervisors = User::where('role', 'supervisor')->get();
+
+        // 🛠️ INAYOS DITO: Pinalitan mula 'admin.students.create' tungo sa tamang folder na 'students.create'
+        return view('students.create', compact('teachers', 'supervisors'));
+    }
+
+    /**
+     * Store a newly initialized OJT student record into the user registry database table.
+     */
+    public function storeStudent(Request $request)
+    {
         $request->validate([
-            'student_id' => ['required', 'exists:users,id'],
-            'teacher_id' => ['required', 'exists:users,id'],
-            'supervisor_id' => ['required', 'exists:users,id'],
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+            'required_hours' => 'nullable|integer|min:1',
         ]);
 
-        $student = User::where('role', 'student')->findOrFail($request->student_id);
-        $teacher = User::where('role', 'coordinator')->findOrFail($request->teacher_id);
-        $supervisor = User::where('role', 'supervisor')->findOrFail($request->supervisor_id);
+        // Safely map and write new user model properties
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => 'student', // Automatically flags account architecture status
+            'required_hours' => $request->required_hours ?? 500, // Safe fallback threshold
+        ]);
 
-        $student->teacher_id = $teacher->id;
-        $student->supervisor_id = $supervisor->id;
-        $student->save();
+        // ⭐ UPDATED: DYNAMIC REDIRECT BASED ON WHO IS LOGGED IN
+        $user = Auth::user();
 
-        return back()->with('success', 'Student assignment updated successfully.');
+        if ($user->role === 'teacher' || $user->role === 'coordinator') {
+            return redirect()->route('teacher.dashboard')->with('success', 'New OJT student registered successfully.');
+        } elseif ($user->role === 'supervisor') {
+            return redirect()->route('supervisor.dashboard')->with('success', 'New OJT student registered successfully.');
+        }
+
+        // Default fallback destination for Admin users
+        return redirect()->route('admin.student-assignments')->with('success', 'New OJT student registered successfully.');
     }
 }

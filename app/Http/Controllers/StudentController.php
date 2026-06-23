@@ -27,7 +27,7 @@ class StudentController extends Controller
         $student = $request->user();
         $documents = $student->documents()->latest('uploaded_at')->get();
 
-        return view('student.documents', compact('student', 'documents'));
+        return view('students.documents', compact('student', 'documents'));
     }
 
     public function uploadDocument(Request $request)
@@ -74,7 +74,7 @@ class StudentController extends Controller
         $student = $request->user();
         $journals = $student->journals()->latest()->get();
 
-        return view('student.journals', compact('student', 'journals'));
+        return view('students.journals', compact('student', 'journals'));
     }
 
     public function storeJournal(Request $request)
@@ -115,7 +115,7 @@ class StudentController extends Controller
         $student = $request->user();
         $timelogs = $student->timeLogs()->latest('date')->get();
 
-        return view('student.timelogs', compact('student', 'timelogs'));
+        return view('students.timelogs', compact('student', 'timelogs'));
     }
 
     public function submitTimeLog(Request $request)

@@ -4,9 +4,19 @@
 
 @section('content')
 <div class="page-inner">
-    <div class="page-header">
-        <h3 class="fw-bold mb-3">Time Log Approvals</h3>
-        <p class="text-white-50">Review and sign student daily time logs for accuracy.</p>
+    <!-- 🌟 BINAGO: Ginawang flex row para magkatabi ang Title at ang Add Student Button -->
+    <div class="page-header d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">Time Log Approvals</h3>
+            <p class="text-white-50 mb-0">Review and sign student daily time logs for accuracy.</p>
+        </div>
+
+        <!-- 🌟 IPINESTE: Dito nakalagay ang tamang button link natin -->
+        <div>
+            <a href="{{ route('students.create') }}" class="btn btn-primary btn-round px-4">
+                <i class="fa fa-plus me-1"></i> Add Student
+            </a>
+        </div>
     </div>
 
     @if (session('success'))

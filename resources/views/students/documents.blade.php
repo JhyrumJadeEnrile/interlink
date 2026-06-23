@@ -4,16 +4,35 @@
 
 @section('content')
 
-{{-- Page Header --}}
-<div class="page-header">
-    <h3 class="fw-bold mb-1">OJT Documents</h3>
-    <ul class="breadcrumbs mb-3">
-        <li class="nav-home"><a href="{{ url('/dashboard') }}"><i class="icon-home"></i></a></li>
-        <li class="separator"><i class="icon-arrow-right"></i></li>
-        <li class="nav-item"><a href="#">My OJT</a></li>
-        <li class="separator"><i class="icon-arrow-right"></i></li>
-        <li class="nav-item"><a href="#">Documents</a></li>
-    </ul>
+{{-- Page Header with Formal Photo Upload Module --}}
+<div class="page-header d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between pb-3 mb-4 border-bottom">
+    <div class="d-flex align-items-center">
+        <!-- Profile Photo Upload Element -->
+        <div class="avatar avatar-xl position-relative me-3 group shadow-sm">
+            <img src="{{ Auth::user()->profile_photo_path ? asset('storage/' . Auth::user()->profile_photo_path) : 'https://via.placeholder.com/100' }}"
+                 alt="Formal Profile Photo"
+                 class="avatar-img rounded-circle border border-2 border-primary"
+                 style="width: 65px; height: 65px; object-fit: cover;">
+
+            <form action="{{ route('profile.photo.update') }}" method="POST" enctype="multipart/form-data" class="position-absolute bottom-0 end-0 m-0">
+                @csrf
+                <label for="studentPhotoInput" class="btn btn-primary btn-sm btn-round p-0 d-flex align-items-center justify-content-center shadow" style="width: 24px; height: 24px; cursor: pointer; border-radius: 50%;">
+                    <i class="fas fa-camera" style="font-size: 10px;"></i>
+                </label>
+                <input type="file" id="studentPhotoInput" name="profile_photo" class="d-none" onchange="this.form.submit()">
+            </form>
+        </div>
+        <div>
+            <h3 class="fw-bold mb-1">OJT Documents</h3>
+            <ul class="breadcrumbs p-0 m-0" style="background: transparent;">
+                <li class="nav-home"><a href="{{ url('/dashboard') }}"><i class="icon-home"></i></a></li>
+                <li class="separator"><i class="icon-arrow-right"></i></li>
+                <li class="nav-item"><a href="#">My OJT</a></li>
+                <li class="separator"><i class="icon-arrow-right"></i></li>
+                <li class="nav-item"><a href="#">Documents</a></li>
+            </ul>
+        </div>
+    </div>
 </div>
 
 {{-- Alerts --}}

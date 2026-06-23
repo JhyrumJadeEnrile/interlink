@@ -11,7 +11,12 @@
         </div>
         <div class="ms-md-auto py-2 py-md-0">
             <a href="#" class="btn btn-label-info btn-round me-2">Manage</a>
-            <a href="#" class="btn btn-primary btn-round">Add Student</a>
+            <!-- 🌟 BINAGO: Pinalitan ang href mula sa # papunta sa totoong route link na may window.location bypass -->
+            <a href="{{ route('students.create') }}"
+               onclick="window.location.href='{{ route('students.create') }}'; return true;"
+               class="btn btn-primary btn-round">
+                Add Student
+            </a>
         </div>
     </div>
 

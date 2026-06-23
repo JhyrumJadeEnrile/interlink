@@ -4,10 +4,10 @@
 
 @section('content')
 
-<div class="page-header d-flex align-items-center justify-content-between">
+<div class="page-header d-flex align-items-center justify-content-between mb-4">
     <div>
         <h3 class="fw-bold mb-1">Student Assignments</h3>
-        <ul class="breadcrumbs mb-3">
+        <ul class="breadcrumbs mb-0" style="background: transparent; padding-left: 0;">
             <li class="nav-home"><a href="{{ url('/dashboard') }}"><i class="icon-home"></i></a></li>
             <li class="separator"><i class="icon-arrow-right"></i></li>
             <li class="nav-item"><a href="#">Admin</a></li>
@@ -15,6 +15,11 @@
             <li class="nav-item"><a href="#">Student Assignments</a></li>
         </ul>
     </div>
+
+    <!-- 🌟 ADDED: Direct standalone shortcut page redirect option -->
+    <a href="{{ route('admin.students.create') }}" class="btn btn-primary btn-round">
+        <i class="fa fa-plus me-1"></i> Add Student
+    </a>
 </div>
 
 @if (session('success'))
