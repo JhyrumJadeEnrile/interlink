@@ -1,0 +1,5 @@
+<?php
+
+// This directory should contain your Firebase service account JSON file
+// Download from: https://console.firebase.google.com/project/interlink-11d80/settings/serviceaccounts/adminsdk
+// And name it: service-account.json
