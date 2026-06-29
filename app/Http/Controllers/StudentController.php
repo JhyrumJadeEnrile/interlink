@@ -7,6 +7,7 @@ use App\Models\TimeLog;
 use App\Models\WeeklyJournal;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class StudentController extends Controller
@@ -161,6 +162,44 @@ class StudentController extends Controller
         ]);
 
         return back()->with('success', 'Time log submitted for supervisor review.');
+    }
+
+    public function profile(Request $request)
+    {
+        $this->authorizeStudent();
+        $student = $request->user();
+        return view('students.profile', compact('student'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $this->authorizeStudent();
+        $student = $request->user();
+
+        $rules = [
+            'name'  => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'unique:users,email,' . $student->id],
+        ];
+
+        if ($request->filled('password')) {
+            $rules['current_password']      = ['required'];
+            $rules['password']              = ['required', 'min:8', 'confirmed'];
+        }
+
+        $request->validate($rules);
+
+        if ($request->filled('current_password')) {
+            if (!Hash::check($request->current_password, $student->password)) {
+                return back()->withErrors(['current_password' => 'Current password is incorrect.'])->withInput();
+            }
+            $student->password = Hash::make($request->password);
+        }
+
+        $student->name  = $request->name;
+        $student->email = $request->email;
+        $student->save();
+
+        return back()->with('success', 'Profile updated successfully.');
     }
 
     public function destroyTimeLog(Request $request, $id)

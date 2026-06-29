@@ -15,11 +15,6 @@
             <li class="nav-item"><a href="#">Student Assignments</a></li>
         </ul>
     </div>
-
-    <!-- 🌟 ADDED: Direct standalone shortcut page redirect option -->
-    <a href="{{ route('admin.students.create') }}" class="btn btn-primary btn-round">
-        <i class="fa fa-plus me-1"></i> Add Student
-    </a>
 </div>
 
 @if (session('success'))

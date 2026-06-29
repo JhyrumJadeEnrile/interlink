@@ -74,6 +74,12 @@
                         @endif
                     </a>
                 </li>
+                <li class="nav-item {{ Request::is('student/profile') ? 'active' : '' }}">
+                    <a href="{{ route('student.profile') }}">
+                        <i class="fas fa-user-circle"></i>
+                        <p>My Profile</p>
+                    </a>
+                </li>
                 @endif
 
                 {{-- ── COORDINATOR ── --}}

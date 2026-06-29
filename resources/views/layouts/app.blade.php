@@ -172,23 +172,50 @@
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle d-flex align-items-center gap-2 pe-0"
                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <div style="width:30px;height:30px;border-radius:50%;background:#5867dd;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;">
-                                    {{ strtoupper(substr(Auth::user()->name,0,2)) }}
-                                </div>
+                                {{-- Avatar: show photo if exists, else initials --}}
+                                @if(Auth::user()->profile_photo_path)
+                                    <img src="{{ asset('storage/' . Auth::user()->profile_photo_path) }}"
+                                         alt="Avatar"
+                                         style="width:30px;height:30px;border-radius:50%;object-fit:cover;border:2px solid #eaebf0;">
+                                @else
+                                    <div style="width:30px;height:30px;border-radius:50%;background:#5867dd;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;">
+                                        {{ strtoupper(substr(Auth::user()->name,0,2)) }}
+                                    </div>
+                                @endif
                                 <span style="font-size:13px;font-weight:500;">{{ Auth::user()->name }}</span>
                                 <span class="badge ms-1" style="background:rgba(88,103,221,.15);color:#5867dd;font-size:10px;">{{ session('role') }}</span>
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2" style="border-radius:10px;min-width:210px;">
-                                <li class="px-3 py-2">
-                                    <div style="font-size:13px;font-weight:600;color:#1a1a2e;">{{ Auth::user()->name }}</div>
-                                    <div style="font-size:11px;color:#aaa;">{{ Auth::user()->email }}</div>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2" style="border-radius:10px;min-width:220px;">
+                                {{-- User info header --}}
+                                <li class="px-3 py-2 d-flex align-items-center gap-2">
+                                    @if(Auth::user()->profile_photo_path)
+                                        <img src="{{ asset('storage/' . Auth::user()->profile_photo_path) }}"
+                                             alt="Avatar"
+                                             style="width:38px;height:38px;border-radius:50%;object-fit:cover;flex-shrink:0;">
+                                    @else
+                                        <div style="width:38px;height:38px;border-radius:50%;background:#5867dd;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;flex-shrink:0;">
+                                            {{ strtoupper(substr(Auth::user()->name,0,2)) }}
+                                        </div>
+                                    @endif
+                                    <div>
+                                        <div style="font-size:13px;font-weight:600;color:#1a1a2e;">{{ Auth::user()->name }}</div>
+                                        <div style="font-size:11px;color:#aaa;">{{ Auth::user()->email }}</div>
+                                    </div>
                                 </li>
                                 <li><hr class="dropdown-divider my-1"></li>
+                                {{-- My Profile link --}}
+                                <li>
+                                    <a href="{{ route('profile.edit') }}" class="dropdown-item d-flex align-items-center gap-2" style="font-size:13px;color:#1a1a2e;">
+                                        <i class="fas fa-user-circle me-1" style="color:#5867dd;width:16px;"></i> My Profile
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider my-1"></li>
+                                {{-- Logout --}}
                                 <li>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
-                                        <button type="submit" class="dropdown-item text-danger" style="font-size:13px;">
-                                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                        <button type="submit" class="dropdown-item d-flex align-items-center gap-2 text-danger" style="font-size:13px;">
+                                            <i class="fas fa-sign-out-alt me-1" style="width:16px;"></i> Logout
                                         </button>
                                     </form>
                                 </li>

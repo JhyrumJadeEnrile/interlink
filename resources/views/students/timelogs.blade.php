@@ -9,11 +9,26 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
     .location-suggestion-item {
-        padding: 8px 12px; font-size: 12px; color: #333;
-        cursor: pointer; border-bottom: 1px solid #f5f5f5; transition: background .1s;
+        padding: 9px 14px; font-size: 12px; color: #444;
+        cursor: pointer; border-bottom: 1px solid #f5f5f8; transition: background .12s;
+        display: flex; align-items: center; gap: 8px;
     }
+    .location-suggestion-item::before { content: '\1F4CD'; font-size: 11px; opacity: .4; }
     .location-suggestion-item:hover { background: #f4f5ff; color: #5867dd; }
     .location-suggestion-item:last-child { border-bottom: none; }
+
+    /* Form label icons */
+    .form-label i { opacity: .7; }
+
+    /* Tighter card body on left form */
+    .tl-form-card .card-body { padding: 1.25rem !important; }
+
+    /* Confirm location btn */
+    #location-confirm-btn { transition: opacity .2s, box-shadow .2s; }
+    #location-confirm-btn:not([style*="opacity: 0.4"]) { box-shadow: 0 3px 10px rgba(40,199,111,.3); }
+
+    /* Badge pill for hours */
+    .hrs-badge { background:#f0f0f5;color:#1a1a2e;font-size:12px;padding:5px 12px;border-radius:50px;font-weight:600; }
 </style>
 
 @endpush
@@ -52,34 +67,41 @@
     {{-- ── Log Form ── --}}
     <div class="col-lg-5">
         <div class="card card-round">
-            <div class="card-header d-flex align-items-center gap-2">
-                <span style="width:32px;height:32px;border-radius:8px;background:rgba(255,173,70,.15);display:flex;align-items:center;justify-content:center;">
+            <div class="card-header d-flex align-items-center gap-2" style="background:linear-gradient(135deg,rgba(255,173,70,.08),rgba(255,173,70,.02)) !important;">
+                <span style="width:34px;height:34px;border-radius:10px;background:rgba(255,173,70,.18);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(255,173,70,.2);">
                     <i class="fas fa-clock" style="color:#ffad46;font-size:15px;"></i>
                 </span>
-                <span class="card-title mb-0">Log Time</span>
+                <div>
+                    <span class="card-title mb-0">Log Time</span>
+                    <div style="font-size:11px;color:#aaa;font-weight:400;">Fill in your daily attendance</div>
+                </div>
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ route('student.timelogs.store') }}" enctype="multipart/form-data">
                     @csrf
 
                     <div class="mb-3">
-                        <label class="form-label fw-semibold" style="font-size:12px;color:#555;">Date</label>
-                        <input type="date" name="date" class="form-control" style="height:40px;"
+                        <label class="form-label fw-semibold d-flex align-items-center gap-1" style="font-size:12px;color:#555;">
+                            <i class="fas fa-calendar-alt" style="color:#5867dd;font-size:11px;"></i> Date
+                        </label>
+                        <input type="date" name="date" id="log-date" class="form-control" style="height:42px;"
                                value="{{ old('date', now()->format('Y-m-d')) }}" required />
                     </div>
 
                     <div class="row g-3 mb-3">
                         <div class="col-6">
                             <label class="form-label fw-semibold" style="font-size:12px;color:#555;">Time In</label>
-                            <input type="datetime-local" name="time_in" class="form-control" style="height:40px;"
-                                   value="{{ old('time_in') }}" required />
+                            <input type="time" id="time-in-picker" class="form-control" style="height:40px;"
+                                   value="{{ old('time_in') ? \Carbon\Carbon::parse(old('time_in'))->format('H:i') : '' }}" required />
+                            <input type="hidden" name="time_in" id="time-in-value" value="{{ old('time_in') }}" />
                         </div>
                         <div class="col-6">
                             <label class="form-label fw-semibold" style="font-size:12px;color:#555;">
                                 Time Out <span class="fw-normal" style="color:#bbb;">(optional)</span>
                             </label>
-                            <input type="datetime-local" name="time_out" class="form-control" style="height:40px;"
-                                   value="{{ old('time_out') }}" />
+                            <input type="time" id="time-out-picker" class="form-control" style="height:40px;"
+                                   value="{{ old('time_out') ? \Carbon\Carbon::parse(old('time_out'))->format('H:i') : '' }}" />
+                            <input type="hidden" name="time_out" id="time-out-value" value="{{ old('time_out') }}" />
                         </div>
                     </div>
 
@@ -111,7 +133,7 @@
                         </div>
 
                         {{-- Map --}}
-                        <div id="location-map" style="height:210px;border-radius:10px;border:1px solid #e0e0ea;overflow:hidden;"></div>
+                        <div id="location-map" style="height:200px;border-radius:10px;border:1px solid #e0e0ea;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);"></div>
 
                         {{-- Confirmed location badge --}}
                         <div id="location-confirmed-badge" class="mt-2 align-items-center gap-2 px-3 py-2 rounded"
@@ -132,16 +154,17 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold" style="font-size:12px;color:#555;">Photo Attachment</label>
-                        <div class="tl-dropzone position-relative text-center p-4" id="tl-drop-area">
-                            <i class="fas fa-camera fs-2 mb-2 d-block" id="tl-icon" style="color:#ccc;"></i>
-                            <span id="tl-file-text" style="font-size:13px;color:#aaa;">Attach proof / workspace image</span>
+                        <div class="tl-dropzone position-relative text-center p-3" id="tl-drop-area">
+                            <i class="fas fa-camera mb-1 d-block" id="tl-icon" style="color:#ccc;font-size:24px;"></i>
+                            <span id="tl-file-text" style="font-size:12px;color:#aaa;display:block;">Click to attach workspace photo</span>
+                            <span style="font-size:10px;color:#ccc;">JPG, PNG — up to 5 MB</span>
                             <input type="file" name="photo" id="tl-file-input" accept="image/*"
                                    class="position-absolute top-0 start-0 w-100 h-100 opacity-0" style="cursor:pointer;" />
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-warning btn-round w-100 fw-semibold text-dark">
-                        <i class="fas fa-sign-in-alt me-2"></i>Submit Time Log
+                    <button type="submit" class="btn btn-warning btn-round w-100 fw-bold text-dark" style="height:44px;font-size:13px;letter-spacing:.01em;box-shadow:0 4px 12px rgba(255,173,70,.3);">
+                        <i class="fas fa-paper-plane me-2"></i>Submit Time Log
                     </button>
                 </form>
             </div>
@@ -155,8 +178,13 @@
         <div class="card card-round mb-4">
             <div class="card-body p-4">
                 <div class="d-flex align-items-center gap-2 mb-3">
-                    <i class="fas fa-chart-line" style="color:#28c76f;"></i>
-                    <h6 class="fw-bold mb-0" style="font-size:14px;">OJT Hours Progress</h6>
+                    <span style="width:34px;height:34px;border-radius:10px;background:rgba(40,199,111,.12);display:flex;align-items:center;justify-content:center;">
+                        <i class="fas fa-chart-line" style="color:#28c76f;font-size:14px;"></i>
+                    </span>
+                    <div>
+                        <h6 class="fw-bold mb-0" style="font-size:14px;">OJT Hours Progress</h6>
+                        <div style="font-size:10px;color:#aaa;">Updated in real-time</div>
+                    </div>
                 </div>
 
                 <div class="d-flex justify-content-between align-items-end mb-2">
@@ -205,11 +233,14 @@
 
         {{-- Logs table --}}
         <div class="card card-round">
-            <div class="card-header d-flex align-items-center gap-2">
-                <span style="width:32px;height:32px;border-radius:8px;background:rgba(29,122,243,.1);display:flex;align-items:center;justify-content:center;">
+            <div class="card-header d-flex align-items-center gap-2" style="background:linear-gradient(135deg,rgba(29,122,243,.05),transparent) !important;">
+                <span style="width:34px;height:34px;border-radius:10px;background:rgba(29,122,243,.1);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(29,122,243,.15);">
                     <i class="fas fa-history" style="color:#1d7af3;font-size:14px;"></i>
                 </span>
-                <span class="card-title mb-0">Recent Logs</span>
+                <div>
+                    <span class="card-title mb-0">Recent Logs</span>
+                    <div style="font-size:11px;color:#aaa;font-weight:400;">Your submitted time entries</div>
+                </div>
                 <span class="ms-auto badge rounded-pill border" style="background:#f4f5f7;color:#555;font-size:11px;padding:5px 12px;">
                     {{ $timelogs->count() }} {{ Str::plural('entry', $timelogs->count()) }}
                 </span>
@@ -479,5 +510,38 @@
         if (box) box.style.display = 'none';
     }
 })();
+</script>
+
+<script>
+// File picker
+document.addEventListener('DOMContentLoaded', function () {
+    var input    = document.getElementById('tl-file-input');
+    var text     = document.getElementById('tl-file-text');
+    var icon     = document.getElementById('tl-icon');
+
+    if (input) {
+        input.addEventListener('change', function () {
+            if (this.files.length) {
+                text.textContent = this.files[0].name;
+                text.style.color = '#ffad46';
+                text.style.fontWeight = '600';
+                icon.className = 'fas fa-images fs-2 mb-2 d-block';
+                icon.style.color = '#ffad46';
+            }
+        });
+    }
+
+    // Combine date + time into Y-m-d\TH:i format before submit
+    var form = document.querySelector('form[action*="timelogs"]');
+    if (form) {
+        form.addEventListener('submit', function () {
+            var date    = document.getElementById('log-date').value;
+            var timeIn  = document.getElementById('time-in-picker').value;
+            var timeOut = document.getElementById('time-out-picker').value;
+            if (date && timeIn)  document.getElementById('time-in-value').value  = date + 'T' + timeIn;
+            if (date && timeOut) document.getElementById('time-out-value').value = date + 'T' + timeOut;
+        });
+    }
+});
 </script>
 @endpush

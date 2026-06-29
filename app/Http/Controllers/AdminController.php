@@ -14,9 +14,11 @@ class AdminController extends Controller
      */
     public function studentAssignments()
     {
-        // Keep your existing assignment logic here
-        // e.g., $students = User::where('role', 'student')->get();
-        // return view('admin.students.index', compact('students'));
+        $students    = User::where('role', 'student')->get();
+        $supervisors = User::where('role', 'supervisor')->get();
+        $teachers    = User::where('role', 'coordinator')->orWhere('role', 'teacher')->get();
+
+        return view('admin.student-assignments', compact('students', 'supervisors', 'teachers'));
     }
 
     /**
@@ -24,7 +26,19 @@ class AdminController extends Controller
      */
     public function linkStudent(Request $request)
     {
-        // Keep your existing linking database transactions here
+        $request->validate([
+            'student_id'    => 'required|exists:users,id',
+            'teacher_id'    => 'required|exists:users,id',
+            'supervisor_id' => 'required|exists:users,id',
+        ]);
+
+        $student = User::where('id', $request->student_id)->where('role', 'student')->firstOrFail();
+        $student->update([
+            'teacher_id'    => $request->teacher_id,
+            'supervisor_id' => $request->supervisor_id,
+        ]);
+
+        return redirect()->route('admin.student-assignments')->with('success', 'Student assigned successfully.');
     }
 
     /**

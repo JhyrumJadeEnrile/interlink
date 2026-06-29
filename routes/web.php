@@ -60,6 +60,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/timelogs', [StudentController::class, 'timelogs'])->name('student.timelogs');
         Route::post('/timelogs', [StudentController::class, 'submitTimeLog'])->name('student.timelogs.store');
         Route::delete('/timelogs/{id}', [StudentController::class, 'destroyTimeLog'])->name('student.timelogs.destroy');
+
+        Route::get('/profile', [StudentController::class, 'profile'])->name('student.profile');
+        Route::put('/profile', [StudentController::class, 'updateProfile'])->name('student.profile.update');
     });
 
     // Teacher / Coordinator
@@ -98,6 +101,10 @@ Route::middleware(['auth'])->group(function () {
         $user->update(['profile_photo_path' => $path]);
         return back()->with('success', 'Formal profile photo updated successfully.');
     })->name('profile.photo.update');
+
+    // Profile (all roles)
+    Route::get('/profile', [StudentController::class, 'profile'])->name('profile.edit');
+    Route::put('/profile', [StudentController::class, 'updateProfile'])->name('profile.update');
 
     // Reports
     Route::get('/reports/final', [ReportController::class, 'finalOjtReport'])->name('reports.final');
