@@ -212,4 +212,42 @@ class User extends Authenticatable
     {
         return $this->hasMany(Message::class, 'receiver_id');
     }
+
+    /**
+     * Department Assignment Relationships
+     */
+    public function departmentAssignments()
+    {
+        return $this->hasMany(StudentDepartmentAssignment::class, 'student_id');
+    }
+
+    public function supervisedDepartmentAssignments()
+    {
+        return $this->hasMany(StudentDepartmentAssignment::class, 'supervisor_id');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id');
+    }
+
+    /**
+     * Check if student is assigned to a specific supervisor with department
+     */
+    public function isAssignedToSupervisor($supervisorId): bool
+    {
+        return StudentDepartmentAssignment::isStudentAssignedToSupervisor($this->id, $supervisorId);
+    }
+
+    /**
+     * Get assigned department for a specific supervisor
+     */
+    public function getAssignedDepartment($supervisorId): ?string
+    {
+        $assignment = $this->departmentAssignments()
+            ->where('supervisor_id', $supervisorId)
+            ->first();
+
+        return $assignment?->department;
+    }
 }

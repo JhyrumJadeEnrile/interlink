@@ -134,6 +134,22 @@ class StudentController extends Controller
     {
         $this->authorizeStudent();
 
+        $student = $request->user();
+
+        // Authorization check: Student must have a supervisor assignment
+        if (!$student->supervisor_id) {
+            return back()->withErrors([
+                'supervisor' => 'You are not yet assigned to a supervisor. Please contact your academic adviser.'
+            ])->withInput();
+        }
+
+        // Check if student is properly assigned to their supervisor via department assignment
+        if (!$student->isAssignedToSupervisor($student->supervisor_id)) {
+            return back()->withErrors([
+                'department' => 'You are not yet assigned to a department under your supervisor. Please contact your academic adviser.'
+            ])->withInput();
+        }
+
         $validated = $request->validate([
             'date'      => ['required', 'date'],
             'time_in'   => ['required', 'date_format:Y-m-d\TH:i'],
@@ -150,7 +166,6 @@ class StudentController extends Controller
         }
 
         $duration   = $timeOut ? $timeIn->diffInMinutes($timeOut) : 0;
-        $student    = $request->user();
         $supervisorId = $student->supervisor_id;
 
         $photoPath = null;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -19,9 +20,12 @@ class SupervisorProfileController extends Controller
     {
         $this->authorizeSupervisor();
 
-        // Return the supervisor user object to the view
+        // Return the supervisor user object and available companies to the view
+        $companies = Company::all();
+        
         return view('supervisor.profile', [
-            'supervisor' => Auth::user()
+            'supervisor' => Auth::user(),
+            'companies' => $companies
         ]);
     }
 
@@ -31,8 +35,9 @@ class SupervisorProfileController extends Controller
 
         // 1. Validation
         $validated = $request->validate([
+            'company_id' => ['nullable', 'exists:companies,id', 'integer'],
             'company_name' => ['nullable', 'string', 'max:255'],
-            'department' => ['nullable', 'string', 'max:255'],
+            'department' => ['required', 'string', 'max:255'],
             'profile_photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ]);
 
@@ -51,13 +56,20 @@ class SupervisorProfileController extends Controller
         }
 
         // 3. Update fields
-        $user->company_name = $request->input('company_name');
-        $user->department = $request->input('department');
+        if ($validated['company_id']) {
+            $company = Company::find($validated['company_id']);
+            $user->company_id = $company->id;
+            $user->company_name = $company->company_name;
+        } else {
+            $user->company_name = $request->input('company_name');
+        }
+
+        $user->department = $validated['department'];
 
         // Save the user model
         $user->save();
 
         return redirect()->route('supervisor.profile.edit')
-                         ->with('success', 'Profile updated successfully!');
+                         ->with('success', 'Profile updated successfully! Department assignment reflected to your assigned students.');
     }
 }

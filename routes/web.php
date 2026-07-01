@@ -77,6 +77,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/students/required-hours', [TeacherController::class, 'updateRequiredHours'])->name('teacher.required-hours.update');
         Route::get('/approved-logs', [TeacherController::class, 'approvedLogs'])->name('teacher.approved-logs');
         Route::get('/dashboard', [TeacherController::class, 'students'])->name('teacher.dashboard');
+        
+        // Department Assignment Routes
+        Route::get('/assign-department', [TeacherController::class, 'showAssignDepartment'])->name('teacher.assign-department');
+        Route::post('/assign-department', [TeacherController::class, 'assignDepartment'])->name('teacher.assign-department.store');
+        Route::get('/department-assignments', [TeacherController::class, 'viewDepartmentAssignments'])->name('teacher.department-assignments');
     });
 
     // Supervisor
