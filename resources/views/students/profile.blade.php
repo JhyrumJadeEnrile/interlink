@@ -43,30 +43,30 @@
                     @if($student->profile_photo_path)
                         <img src="{{ asset('storage/' . $student->profile_photo_path) }}"
                              id="avatar-preview"
-                             style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid #5867dd;display:block;">
+                             style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid #7c5cff;display:block;">
                         <div id="avatar-initials" style="display:none;"></div>
                     @else
                         <div id="avatar-initials"
-                             style="width:100px;height:100px;border-radius:50%;background:#5867dd;color:#fff;
+                             style="width:100px;height:100px;border-radius:50%;background:#7c5cff;color:#fff;
                                     display:flex;align-items:center;justify-content:center;
                                     font-size:28px;font-weight:700;margin:0 auto;">
                             {{ strtoupper(substr($student->name, 0, 2)) }}
                         </div>
                         <img id="avatar-preview" src=""
-                             style="display:none;width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid #5867dd;">
+                             style="display:none;width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid #7c5cff;">
                     @endif
 
                     <label for="photo-input"
                            style="position:absolute;bottom:0;right:0;width:28px;height:28px;border-radius:50%;
-                                  background:#5867dd;color:#fff;display:flex;align-items:center;
+                                  background:#7c5cff;color:#fff;display:flex;align-items:center;
                                   justify-content:center;cursor:pointer;border:2px solid #fff;">
                         <i class="fas fa-camera" style="font-size:11px;"></i>
                     </label>
                     <input type="file" id="photo-input" name="profile_photo" accept="image/*" style="display:none;">
                 </div>
 
-                <div class="fw-bold" style="font-size:16px;color:#1a1a2e;">{{ $student->name }}</div>
-                <div style="font-size:12px;color:#aaa;margin-bottom:12px;">{{ $student->email }}</div>
+                <div class="fw-bold" style="font-size:16px;color:#ffffff;">{{ $student->name }}</div>
+                <div style="font-size:12px;color:rgba(220,210,255,0.45);margin-bottom:12px;">{{ $student->email }}</div>
 
                 <button type="submit" id="save-photo-btn"
                         class="btn btn-primary btn-sm btn-round w-100"
@@ -78,35 +78,35 @@
 
         {{-- OJT Summary Card --}}
         <div class="card card-round p-4">
-            <h6 class="fw-bold mb-3" style="font-size:13px;color:#1a1a2e;">OJT Summary</h6>
+            <h6 class="fw-bold mb-3" style="font-size:13px;color:#ffffff;">OJT Summary</h6>
             <div class="d-flex justify-content-between mb-2" style="font-size:13px;">
-                <span style="color:#888;">Required Hours</span>
+                <span style="color:rgba(220,210,255,0.55);">Required Hours</span>
                 <span class="fw-semibold">{{ $student->required_hours ?? 500 }} hrs</span>
             </div>
             <div class="d-flex justify-content-between mb-2" style="font-size:13px;">
-                <span style="color:#888;">Completed</span>
+                <span style="color:rgba(220,210,255,0.55);">Completed</span>
                 <span class="fw-semibold text-success">{{ number_format($student->hoursCompleted(), 2) }} hrs</span>
             </div>
             <div class="d-flex justify-content-between mb-3" style="font-size:13px;">
-                <span style="color:#888;">Remaining</span>
+                <span style="color:rgba(220,210,255,0.55);">Remaining</span>
                 <span class="fw-semibold text-danger">{{ number_format($student->hoursRemaining(), 2) }} hrs</span>
             </div>
             <div class="progress" style="height:6px;border-radius:10px;">
                 <div class="progress-bar bg-success"
                      style="width:{{ $student->progressPercentage() }}%;border-radius:10px;"></div>
             </div>
-            <div class="text-end mt-1" style="font-size:11px;color:#aaa;">
+            <div class="text-end mt-1" style="font-size:11px;color:rgba(220,210,255,0.45);">
                 {{ $student->progressPercentage() }}% complete
             </div>
 
-            <hr style="border-color:#f0f0f5;">
+            <hr style="border-color:rgba(255,255,255,0.06);">
 
             <div class="mb-2" style="font-size:13px;">
-                <span style="color:#888;">Supervisor</span><br>
+                <span style="color:rgba(220,210,255,0.55);">Supervisor</span><br>
                 <span class="fw-semibold">{{ $student->supervisor->name ?? '—' }}</span>
             </div>
             <div style="font-size:13px;">
-                <span style="color:#888;">Coordinator</span><br>
+                <span style="color:rgba(220,210,255,0.55);">Coordinator</span><br>
                 <span class="fw-semibold">{{ $student->teacher->name ?? '—' }}</span>
             </div>
         </div>
@@ -117,9 +117,9 @@
     <div class="col-lg-8">
         <div class="card card-round">
             <div class="card-header d-flex align-items-center gap-2">
-                <span style="width:32px;height:32px;border-radius:8px;background:rgba(88,103,221,.12);
+                <span style="width:32px;height:32px;border-radius:8px;background:rgba(124,92,255,.12);
                              display:flex;align-items:center;justify-content:center;">
-                    <i class="fas fa-user-edit" style="color:#5867dd;font-size:14px;"></i>
+                    <i class="fas fa-user-edit" style="color:#7c5cff;font-size:14px;"></i>
                 </span>
                 <span class="card-title mb-0">Edit Profile Information</span>
             </div>
@@ -130,37 +130,37 @@
 
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold" style="font-size:12px;color:#555;">Full Name</label>
+                            <label class="form-label fw-semibold" style="font-size:12px;color:rgba(220,210,255,0.65);">Full Name</label>
                             <input type="text" name="name" class="form-control" style="height:42px;"
                                    value="{{ old('name', $student->name) }}" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold" style="font-size:12px;color:#555;">Email Address</label>
+                            <label class="form-label fw-semibold" style="font-size:12px;color:rgba(220,210,255,0.65);">Email Address</label>
                             <input type="email" name="email" class="form-control" style="height:42px;"
                                    value="{{ old('email', $student->email) }}" required>
                         </div>
                     </div>
 
-                    <hr style="border-color:#f0f0f5;margin:20px 0;">
+                    <hr style="border-color:rgba(255,255,255,0.06);margin:20px 0;">
                     <p class="fw-semibold mb-3"
-                       style="font-size:12px;color:#555;text-transform:uppercase;letter-spacing:.05em;">
+                       style="font-size:12px;color:rgba(220,210,255,0.65);text-transform:uppercase;letter-spacing:.05em;">
                         Change Password
                         <span class="fw-normal text-muted">(leave blank to keep current)</span>
                     </p>
 
                     <div class="row g-3">
                         <div class="col-md-4">
-                            <label class="form-label fw-semibold" style="font-size:12px;color:#555;">Current Password</label>
+                            <label class="form-label fw-semibold" style="font-size:12px;color:rgba(220,210,255,0.65);">Current Password</label>
                             <input type="password" name="current_password" class="form-control"
                                    style="height:42px;" placeholder="••••••••">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-semibold" style="font-size:12px;color:#555;">New Password</label>
+                            <label class="form-label fw-semibold" style="font-size:12px;color:rgba(220,210,255,0.65);">New Password</label>
                             <input type="password" name="password" class="form-control"
                                    style="height:42px;" placeholder="••••••••">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-semibold" style="font-size:12px;color:#555;">Confirm Password</label>
+                            <label class="form-label fw-semibold" style="font-size:12px;color:rgba(220,210,255,0.65);">Confirm Password</label>
                             <input type="password" name="password_confirmation" class="form-control"
                                    style="height:42px;" placeholder="••••••••">
                         </div>

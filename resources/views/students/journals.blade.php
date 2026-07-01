@@ -43,20 +43,32 @@
                 <span class="card-title mb-0">Submit Journal</span>
             </div>
             <div class="card-body">
-                <form method="POST" action="{{ route('student.journals.store') }}">
+                <form method="POST" action="{{ route('student.journals.store') }}" enctype="multipart/form-data">
                     @csrf
 
                     <div class="mb-3">
-                        <label class="form-label fw-semibold" style="font-size:12px;color:#555;">Week Starting</label>
+                        <label class="form-label fw-semibold" style="font-size:12px;color:rgba(220,210,255,0.65);">Week Starting</label>
                         <input type="date" name="week_start" class="form-control" style="height:40px;"
                                value="{{ old('week_start') }}" required />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-semibold" style="font-size:12px;color:#555;">Journal Content</label>
+                        <label class="form-label fw-semibold" style="font-size:12px;color:rgba(220,210,255,0.65);">Journal Content</label>
                         <textarea name="content" rows="7" class="form-control journal-textarea"
                                   placeholder="Describe your tasks, achievements, and lessons learned this week…"
                                   required>{{ old('content') }}</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" style="font-size:12px;color:rgba(220,210,255,0.65);">Photo Attachment</label>
+                        <label for="journal-photo-input" class="btn btn-round w-100 d-flex align-items-center justify-content-center gap-2"
+                               id="journal-photo-btn"
+                               style="height:40px;font-size:12px;font-weight:600;background:rgba(40,199,111,.1);color:#28c76f;border:1.5px dashed rgba(40,199,111,.35);cursor:pointer;">
+                            <i class="fas fa-camera"></i>
+                            <span id="journal-photo-text">Attach a photo</span>
+                        </label>
+                        <input type="file" name="photo" id="journal-photo-input" accept="image/*" class="d-none" />
+                        <span style="font-size:10px;color:rgba(220,210,255,0.35);">JPG, PNG — up to 5 MB</span>
                     </div>
 
                     <button type="submit" class="btn btn-success btn-round w-100 fw-semibold">
@@ -72,10 +84,10 @@
         <div class="card card-round">
             <div class="card-header d-flex align-items-center gap-2">
                 <span style="width:32px;height:32px;border-radius:8px;background:rgba(29,122,243,.1);display:flex;align-items:center;justify-content:center;">
-                    <i class="fas fa-book-open" style="color:#1d7af3;font-size:14px;"></i>
+                    <i class="fas fa-book-open" style="color:#7ac7ff;font-size:14px;"></i>
                 </span>
                 <span class="card-title mb-0">Journal History</span>
-                <span class="ms-auto badge rounded-pill border" style="background:#f4f5f7;color:#555;font-size:11px;padding:5px 12px;">
+                <span class="ms-auto badge rounded-pill border" style="background:rgba(255,255,255,0.05);color:rgba(220,210,255,0.65);font-size:11px;padding:5px 12px;">
                     {{ $journals->count() }} {{ Str::plural('entry', $journals->count()) }}
                 </span>
             </div>
@@ -83,8 +95,8 @@
 
                 @if ($journals->isEmpty())
                     <div class="text-center py-5 px-3">
-                        <div style="width:60px;height:60px;border-radius:50%;background:#f4f5f7;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;">
-                            <i class="fas fa-book" style="font-size:22px;color:#ccc;"></i>
+                        <div style="width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,0.05);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;">
+                            <i class="fas fa-book" style="font-size:22px;color:rgba(220,210,255,0.35);"></i>
                         </div>
                         <h6 class="fw-bold mb-1">No journal entries yet</h6>
                         <p class="text-muted mb-0" style="font-size:13px;">Submit your first weekly reflection using the form on the left.</p>
@@ -93,15 +105,15 @@
                     {{-- Journal cards list --}}
                     <div class="p-3 d-flex flex-column gap-3">
                         @foreach ($journals as $journal)
-                        <div class="journal-entry-card p-3" style="border:1px solid #f0f0f5;border-radius:10px;background:#fafbfc;">
+                        <div class="journal-entry-card p-3" style="border:1px solid rgba(255,255,255,0.06);border-radius:10px;background:rgba(255,255,255,0.04);">
                             <div class="d-flex align-items-start justify-content-between mb-2">
                                 <div class="d-flex align-items-center gap-2">
                                     <span style="width:8px;height:8px;border-radius:50%;background:#28c76f;display:inline-block;flex-shrink:0;margin-top:3px;"></span>
                                     <div>
-                                        <span class="fw-bold" style="font-size:13px;color:#1a1a2e;">
+                                        <span class="fw-bold" style="font-size:13px;color:#ffffff;">
                                             Week of {{ $journal->week_start ? $journal->week_start->format('M d, Y') : 'N/A' }}
                                         </span>
-                                        <div style="font-size:11px;color:#aaa;margin-top:1px;">
+                                        <div style="font-size:11px;color:rgba(220,210,255,0.45);margin-top:1px;">
                                             Submitted {{ $journal->created_at->diffForHumans() }}
                                         </div>
                                     </div>
@@ -123,11 +135,18 @@
                                 </form>
                             </div>
 
-                            <p class="mb-0 journal-content" style="font-size:13px;color:#555;line-height:1.6;white-space:pre-line;">{{ Str::limit($journal->content, 220) }}</p>
+                            <p class="mb-0 journal-content" style="font-size:13px;color:rgba(220,210,255,0.65);line-height:1.6;white-space:pre-line;">{{ Str::limit($journal->content, 220) }}</p>
+
+                            @if ($journal->photo_path)
+                            <a href="{{ asset('storage/' . $journal->photo_path) }}" target="_blank" class="d-inline-block mt-2">
+                                <img src="{{ asset('storage/' . $journal->photo_path) }}" alt="Journal photo attachment"
+                                     style="max-width:120px;max-height:90px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);object-fit:cover;" />
+                            </a>
+                            @endif
 
                             @if(strlen($journal->content) > 220)
                             <button class="btn btn-link btn-sm p-0 mt-1 journal-expand-btn"
-                                    style="font-size:12px;color:#5867dd;"
+                                    style="font-size:12px;color:#7c5cff;"
                                     data-full="{{ e($journal->content) }}"
                                     data-short="{{ e(Str::limit($journal->content, 220)) }}">
                                 Show more
@@ -149,7 +168,7 @@
         resize: none;
         font-size: 13px;
         line-height: 1.6;
-        border-color: #e0e0ea !important;
+        border-color: rgba(168,140,255,0.3) !important;
         border-radius: 8px !important;
     }
     .journal-textarea:focus { border-color: #28c76f !important; box-shadow: 0 0 0 3px rgba(40,199,111,.1) !important; }
@@ -160,6 +179,21 @@
 
 @push('scripts')
 <script>
+// Photo attachment button feedback
+var journalPhotoInput = document.getElementById('journal-photo-input');
+var journalPhotoText  = document.getElementById('journal-photo-text');
+var journalPhotoBtn   = document.getElementById('journal-photo-btn');
+if (journalPhotoInput) {
+    journalPhotoInput.addEventListener('change', function () {
+        if (this.files.length) {
+            journalPhotoText.textContent = this.files[0].name;
+            journalPhotoBtn.style.color = '#28c76f';
+        } else {
+            journalPhotoText.textContent = 'Attach a photo';
+        }
+    });
+}
+
 // Show more / less toggle
 document.querySelectorAll('.journal-expand-btn').forEach(function (btn) {
     var expanded = false;

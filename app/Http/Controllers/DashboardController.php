@@ -22,7 +22,9 @@ class DashboardController extends Controller
 
         if ($user->isCoordinator() || $user->isTeacher()) {
             // Teachers/Coordinators track students assigned to their academic group
-            $students = User::where('teacher_id', $user->id)->get();
+            $students = User::where('teacher_id', $user->id)
+                ->with(['timeLogs', 'documents', 'journals'])
+                ->get();
             return view('teacher.dashboard', compact('students'));
         }
 

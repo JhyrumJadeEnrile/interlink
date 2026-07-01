@@ -13,6 +13,7 @@ class WeeklyJournal extends Model
         'student_id',
         'week_start',
         'content',
+        'photo_path',
     ];
 
     protected $casts = [

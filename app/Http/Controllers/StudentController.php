@@ -85,12 +85,19 @@ class StudentController extends Controller
         $validated = $request->validate([
             'week_start' => ['required', 'date'],
             'content' => ['required', 'string', 'max:5000'],
+            'photo' => ['nullable', 'image', 'max:5120'],
         ]);
+
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('journal-photos', 'public');
+        }
 
         WeeklyJournal::create([
             'student_id' => $request->user()->id,
             'week_start' => $validated['week_start'],
             'content' => $validated['content'],
+            'photo_path' => $photoPath,
         ]);
 
         return back()->with('success', 'Weekly journal submitted.');
@@ -103,6 +110,10 @@ class StudentController extends Controller
         $journal = WeeklyJournal::where('id', $id)
                                 ->where('student_id', $request->user()->id)
                                 ->firstOrFail();
+
+        if ($journal->photo_path) {
+            Storage::disk('public')->delete($journal->photo_path);
+        }
 
         $journal->delete();
 
@@ -200,6 +211,36 @@ class StudentController extends Controller
         $student->save();
 
         return back()->with('success', 'Profile updated successfully.');
+    }
+
+    public function updateTimeOut(Request $request, $id)
+    {
+        $this->authorizeStudent();
+
+        $log = TimeLog::where('id', $id)
+                      ->where('student_id', $request->user()->id)
+                      ->where('status', TimeLog::STATUS_PENDING)
+                      ->whereNull('time_out')
+                      ->firstOrFail();
+
+        $validated = $request->validate([
+            'time_out' => ['required', 'date_format:Y-m-d\TH:i'],
+        ]);
+
+        $timeOut = Carbon::parse($validated['time_out']);
+
+        if ($timeOut->lessThanOrEqualTo(Carbon::parse($log->time_in))) {
+            return back()->withErrors(['time_out' => 'Time-out must be after Time-in.'])->withInput();
+        }
+
+        $duration = Carbon::parse($log->time_in)->diffInMinutes($timeOut);
+
+        $log->update([
+            'time_out'         => $timeOut,
+            'duration_minutes' => $duration,
+        ]);
+
+        return back()->with('success', 'Clock-out time updated successfully.');
     }
 
     public function destroyTimeLog(Request $request, $id)

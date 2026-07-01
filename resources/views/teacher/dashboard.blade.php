@@ -96,6 +96,72 @@
         </div>
     </div>
 
+    {{-- Performance Summary --}}
+    <div class="row mt-3">
+        <div class="col-md-5">
+            <div class="card card-round h-100">
+                <div class="card-header">
+                    <div class="card-title">Performance Summary</div>
+                    <div class="card-category">This week</div>
+                </div>
+                <div class="card-body pb-0">
+                    @if($students->isEmpty())
+                        <p class="text-muted mb-3" style="font-size:13px;">No students assigned yet.</p>
+                    @else
+                        @php $firstStudent = $students->first(); @endphp
+                        <div class="mb-3">
+                            <label for="perf-student-select" class="form-label fw-semibold" style="font-size:12px;color:rgba(220,210,255,0.65);">Student</label>
+                            <select id="perf-student-select" class="form-select">
+                                @foreach($students as $student)
+                                    <option value="{{ $student->id }}"
+                                        data-overall="{{ $student->performanceOverall() }}"
+                                        data-attendance="{{ $student->attendancePercentage() }}"
+                                        data-assignments="{{ $student->assignmentsPercentage() }}"
+                                        data-learning="{{ $student->learningGoalPercentage() }}">
+                                        {{ $student->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="mb-4 mt-2">
+                            <h1 id="perf-overall">{{ $firstStudent->performanceOverall() }}%</h1>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>Attendance</div>
+                                    <div><strong id="perf-attendance-val">{{ $firstStudent->attendancePercentage() }}%</strong></div>
+                                </div>
+                                <div class="progress progress-sm mt-2">
+                                    <div id="perf-attendance-bar" class="progress-bar bg-success" role="progressbar" style="width: {{ $firstStudent->attendancePercentage() }}%;"></div>
+                                </div>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>Assignments</div>
+                                    <div><strong id="perf-assignments-val">{{ $firstStudent->assignmentsPercentage() }}%</strong></div>
+                                </div>
+                                <div class="progress progress-sm mt-2">
+                                    <div id="perf-assignments-bar" class="progress-bar bg-info" role="progressbar" style="width: {{ $firstStudent->assignmentsPercentage() }}%;"></div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>Learning Goal</div>
+                                    <div><strong id="perf-learning-val">{{ $firstStudent->learningGoalPercentage() }}%</strong></div>
+                                </div>
+                                <div class="progress progress-sm mt-2">
+                                    <div id="perf-learning-bar" class="progress-bar bg-warning" role="progressbar" style="width: {{ $firstStudent->learningGoalPercentage() }}%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- Student Compliance Table Modules --}}
     <div class="row mt-3">
         <div class="col-md-12">
@@ -111,6 +177,7 @@
                                     <th>Completed Hours</th>
                                     <th>Required Hours</th>
                                     <th>Progress</th>
+                                    <th>Performance</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
@@ -133,6 +200,34 @@
                                         <small>{{ round($percentage) }}%</small>
                                     </td>
                                     <td>
+                                        @php
+                                            $attendancePct = $student->attendancePercentage();
+                                            $assignmentsPct = $student->assignmentsPercentage();
+                                            $learningPct = $student->learningGoalPercentage();
+                                        @endphp
+                                        <div title="Attendance {{ $attendancePct }}% • Assignments {{ $assignmentsPct }}% • Learning Goal {{ $learningPct }}%"
+                                             style="display:flex;flex-direction:column;gap:3px;min-width:90px;">
+                                            <div class="d-flex align-items-center gap-1">
+                                                <span style="width:16px;font-size:9px;color:rgba(255,255,255,.5);">A</span>
+                                                <div class="flex-fill" style="height:5px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;">
+                                                    <div style="height:100%;width:{{ $attendancePct }}%;background:#28c76f;"></div>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex align-items-center gap-1">
+                                                <span style="width:16px;font-size:9px;color:rgba(255,255,255,.5);">As</span>
+                                                <div class="flex-fill" style="height:5px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;">
+                                                    <div style="height:100%;width:{{ $assignmentsPct }}%;background:#1d7af3;"></div>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex align-items-center gap-1">
+                                                <span style="width:16px;font-size:9px;color:rgba(255,255,255,.5);">L</span>
+                                                <div class="flex-fill" style="height:5px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;">
+                                                    <div style="height:100%;width:{{ $learningPct }}%;background:#ffad46;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
                                         <span class="badge {{ $percentage >= 75 ? 'bg-success' : ($percentage >= 50 ? 'bg-warning' : 'bg-danger') }}">
                                             {{ $percentage >= 75 ? 'On Track' : ($percentage >= 50 ? 'At Risk' : 'Behind') }}
                                         </span>
@@ -148,3 +243,31 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var select = document.getElementById('perf-student-select');
+    if (!select) return;
+
+    select.addEventListener('change', function () {
+        var opt = this.options[this.selectedIndex];
+        var overall = opt.dataset.overall;
+        var attendance = opt.dataset.attendance;
+        var assignments = opt.dataset.assignments;
+        var learning = opt.dataset.learning;
+
+        document.getElementById('perf-overall').textContent = overall + '%';
+
+        document.getElementById('perf-attendance-val').textContent = attendance + '%';
+        document.getElementById('perf-attendance-bar').style.width = attendance + '%';
+
+        document.getElementById('perf-assignments-val').textContent = assignments + '%';
+        document.getElementById('perf-assignments-bar').style.width = assignments + '%';
+
+        document.getElementById('perf-learning-val').textContent = learning + '%';
+        document.getElementById('perf-learning-bar').style.width = learning + '%';
+    });
+});
+</script>
+@endpush

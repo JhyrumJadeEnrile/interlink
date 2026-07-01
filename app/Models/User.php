@@ -100,6 +100,66 @@ class User extends Authenticatable
         return true;
     }
 
+    /**
+     * Performance Summary metrics (used on the coordinator dashboard).
+     */
+
+    // % of weekdays elapsed this week that have an approved time log.
+    public function attendancePercentage(): int
+    {
+        $startOfWeek = now()->startOfWeek(Carbon::MONDAY);
+        $today = now()->startOfDay();
+
+        $expectedDays = 0;
+        for ($day = $startOfWeek->copy(); $day->lte($today); $day->addDay()) {
+            if (! $day->isWeekend()) {
+                $expectedDays++;
+            }
+        }
+
+        if ($expectedDays === 0) {
+            return 100;
+        }
+
+        $loggedDays = $this->timeLogs()
+            ->approved()
+            ->whereBetween('date', [$startOfWeek->format('Y-m-d'), $today->format('Y-m-d')])
+            ->distinct()
+            ->count('date');
+
+        return min(100, (int) round($loggedDays / $expectedDays * 100));
+    }
+
+    // % of required OJT documents (Resume, Consent Form, Internship Agreement) submitted.
+    public function assignmentsPercentage(): int
+    {
+        $required = ['Resume', 'Consent Form', 'Internship Agreement'];
+
+        $submitted = $this->documents()
+            ->whereIn('document_type', $required)
+            ->distinct()
+            ->pluck('document_type')
+            ->unique()
+            ->count();
+
+        return (int) round($submitted / count($required) * 100);
+    }
+
+    // % of weekly journal reflections submitted relative to weeks elapsed since joining.
+    public function learningGoalPercentage(): int
+    {
+        $weeksElapsed = max(1, (int) ceil($this->created_at->diffInDays(now()) / 7));
+        $journalsSubmitted = $this->journals()->count();
+
+        return min(100, (int) round($journalsSubmitted / $weeksElapsed * 100));
+    }
+
+    // Overall Performance Summary score: average of attendance, assignments, and learning goal.
+    public function performanceOverall(): int
+    {
+        return (int) round(($this->attendancePercentage() + $this->assignmentsPercentage() + $this->learningGoalPercentage()) / 3);
+    }
+
     public function teacher()
     {
         return $this->belongsTo(self::class, 'teacher_id');

@@ -38,6 +38,10 @@ class SupervisorController extends Controller
             abort(403);
         }
 
+        if (is_null($timeLog->time_out)) {
+            return back()->withErrors(['time_out' => 'Cannot approve a log without a clock-out time. Please wait for the student to clock out.'])->with('error', 'This log has no clock-out time yet and cannot be approved.');
+        }
+
         $validated = $request->validate([
             'supervisor_signature' => ['required', 'string', 'max:255'],
             'supervisor_notes' => ['nullable', 'string', 'max:2000'],

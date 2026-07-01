@@ -134,9 +134,17 @@
                                     <label class="form-label fw-semibold" style="font-size:12px;color:#555;">Notes <span class="fw-normal text-muted">(optional)</span></label>
                                     <textarea name="supervisor_notes" class="form-control" rows="2" style="font-size:13px;resize:none;" placeholder="Add remarks..."></textarea>
                                 </div>
+                                @if($log->time_out)
                                 <button type="submit" class="btn btn-success btn-round w-100 fw-semibold" style="height:40px;">
                                     <i class="fas fa-check me-2"></i>Approve
                                 </button>
+                                @else
+                                <div class="d-flex align-items-center gap-2 justify-content-center py-2 rounded"
+                                     style="background:rgba(255,173,70,.1);border:1px solid rgba(255,173,70,.3);font-size:12px;color:#d97706;">
+                                    <i class="fas fa-hourglass-half"></i>
+                                    Waiting for student to clock out
+                                </div>
+                                @endif
                             </form>
                         </div>
                     </div>

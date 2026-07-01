@@ -24,71 +24,126 @@
     <link rel="stylesheet" href="{{ asset('assets/css/kaiadmin.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}">
 
-    {{-- Global UI overrides --}}
+    {{-- Global UI overrides — InternLink dark/purple bot theme --}}
     <style>
+        :root {
+            --il-bg-1: #2a1f6e;
+            --il-bg-2: #1a1146;
+            --il-bg-3: #0e0a2e;
+            --il-purple: #7c5cff;
+            --il-purple-dark: #6342d6;
+            --il-purple-light: #c4b0ff;
+            --il-pink: #ff8ad4;
+            --il-blue: #7ac7ff;
+            --il-orange: #ff9678;
+            --il-text: #ffffff;
+            --il-text-soft: rgba(220,210,255,0.65);
+            --il-text-mute: rgba(220,210,255,0.5);
+            --il-text-faint: rgba(220,210,255,0.4);
+            --il-card-bg: rgba(124,92,255,0.08);
+            --il-card-border: rgba(168,140,255,0.25);
+        }
+
+        html, body { background: #0e0a2e; }
+
+        body {
+            background: radial-gradient(circle at 20% 15%, var(--il-bg-1) 0%, var(--il-bg-2) 45%, var(--il-bg-3) 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
         /* ── Brand & sidebar ── */
-        .sidebar[data-background-color="dark"] { background: #0f1117; }
-        .sidebar .sidebar-wrapper { background: #0f1117; }
-        .logo-header[data-background-color="dark"] { background: #0f1117 !important; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .sidebar[data-background-color="dark"] { background: rgba(14,10,46,0.6); border-right: 1px solid rgba(168,140,255,0.15); backdrop-filter: blur(6px); }
+        .sidebar .sidebar-wrapper { background: transparent; }
+        .logo-header[data-background-color="dark"] { background: transparent !important; border-bottom: 1px solid rgba(168,140,255,0.15); }
+
+        /* InternLink bot logo */
+        .il-brand { display: flex; align-items: center; gap: 10px; padding-left: 4px; }
+        .il-brand-text { color: #fff; font-size: 17px; font-weight: 500; letter-spacing: .3px; }
+        .il-brand-text span { color: var(--il-pink); }
 
         /* Nav items */
         .sidebar .nav.nav-secondary .nav-item > a {
-            border-radius: 8px;
+            border-radius: 10px;
             margin: 2px 10px;
             padding: 9px 14px;
+            color: var(--il-text-soft) !important;
             transition: background .15s, color .15s;
         }
-        .sidebar .nav.nav-secondary .nav-item > a:hover { background: rgba(255,255,255,0.07); }
-        .sidebar .nav.nav-secondary .nav-item.active > a { background: rgba(88,103,221,0.22); color: #8e8fff !important; }
-        .sidebar .nav.nav-secondary .nav-item.active > a i { color: #8e8fff !important; }
-        .sidebar .nav-section h4 { font-size: 10px; letter-spacing: .09em; color: #44445a; margin: 16px 0 4px 22px; }
+        .sidebar .nav.nav-secondary .nav-item > a i { color: var(--il-text-mute); }
+        .sidebar .nav.nav-secondary .nav-item > a p { color: inherit; }
+        .sidebar .nav.nav-secondary .nav-item > a:hover { background: rgba(168,140,255,0.1); color: #fff !important; }
+        .sidebar .nav.nav-secondary .nav-item.active > a { background: rgba(124,92,255,0.22); color: var(--il-purple-light) !important; border: 1px solid rgba(168,140,255,0.25); }
+        .sidebar .nav.nav-secondary .nav-item.active > a i { color: var(--il-purple-light) !important; }
+        .sidebar .nav-section h4 { font-size: 10px; letter-spacing: .09em; color: rgba(220,210,255,0.3); margin: 16px 0 4px 22px; }
 
         /* Main panel */
-        .main-panel { background: #f4f5f7; }
+        .main-panel { background: transparent; }
 
         /* Navbar */
-        .navbar.navbar-header { background: #fff !important; border-bottom: 1px solid #eaebf0 !important; box-shadow: 0 1px 4px rgba(0,0,0,.05); }
-        .navbar .profile-username { font-size: 13px; }
+        .navbar.navbar-header { background: transparent !important; border-bottom: none !important; box-shadow: none; }
+        .main-header { background: transparent !important; }
+        .main-header-logo { background: transparent !important; }
+        .navbar .profile-username { font-size: 13px; color: #fff; }
 
-        /* Card refinements */
-        .card { border: 1px solid #eaebf0 !important; box-shadow: 0 1px 4px rgba(0,0,0,.05) !important; border-radius: 12px !important; }
-        .card-round { border-radius: 12px !important; }
-        .card-header { border-bottom: 1px solid #f0f0f5 !important; background: transparent !important; padding: 1rem 1.25rem !important; }
-        .card-title { font-size: 14px !important; font-weight: 600 !important; color: #1a1a2e !important; }
+        /* Card refinements — glassmorphic */
+        .card {
+            background: var(--il-card-bg) !important;
+            border: 1.5px solid var(--il-card-border) !important;
+            box-shadow: none !important;
+            border-radius: 16px !important;
+            backdrop-filter: blur(4px);
+        }
+        .card-round { border-radius: 16px !important; }
+        .card-header { border-bottom: 1px solid rgba(168,140,255,0.15) !important; background: transparent !important; padding: 1rem 1.25rem !important; }
+        .card-title { font-size: 14px !important; font-weight: 600 !important; color: #fff !important; }
+        .card-body { color: var(--il-text-soft); }
 
         /* Buttons */
         .btn-round { border-radius: 50px !important; }
-        .btn-primary { background: #5867dd !important; border-color: #5867dd !important; }
-        .btn-primary:hover { background: #4455cc !important; border-color: #4455cc !important; }
+        .btn-primary { background: var(--il-purple) !important; border-color: var(--il-purple) !important; }
+        .btn-primary:hover { background: var(--il-purple-dark) !important; border-color: var(--il-purple-dark) !important; }
+        .btn-warning { background: var(--il-orange) !important; border-color: var(--il-orange) !important; color: #1a1146 !important; }
+        .btn-success { background: #4ade80 !important; border-color: #4ade80 !important; color: #0e0a2e !important; }
+        .btn-outline-secondary, .btn-secondary { background: rgba(255,255,255,0.06) !important; border-color: rgba(168,140,255,0.3) !important; color: var(--il-text-soft) !important; }
 
         /* Table */
-        .table thead th { font-size: 11px !important; text-transform: uppercase; letter-spacing: .06em; color: #999 !important; font-weight: 600 !important; border-bottom: 1px solid #f0f0f5 !important; background: #fafafa !important; }
-        .table td { border-color: #f5f5f8 !important; vertical-align: middle; font-size: 13px; }
-        .table-head-bg-light thead th { background: #f8f9fb !important; }
-        .table tbody tr:hover td { background: rgba(88,103,221,.03); }
+        .table { color: var(--il-text-soft); --bs-table-bg: transparent; --bs-table-striped-bg: rgba(255,255,255,0.03); background-color: transparent !important; }
+        .table > :not(caption) > * > * { background-color: transparent !important; color: var(--il-text-soft); }
+        .table thead th { font-size: 11px !important; text-transform: uppercase; letter-spacing: .06em; color: rgba(220,210,255,0.5) !important; font-weight: 600 !important; border-bottom: 1px solid rgba(168,140,255,0.15) !important; background: rgba(255,255,255,0.02) !important; }
+        .table td { border-color: rgba(168,140,255,0.1) !important; vertical-align: middle; font-size: 13px; color: var(--il-text-soft); background-color: transparent !important; }
+        .table-head-bg-light thead th { background: rgba(255,255,255,0.03) !important; }
+        .table tbody tr:hover td { background-color: rgba(124,92,255,.08) !important; }
 
         /* Badges */
         .badge { font-size: 11px !important; font-weight: 600 !important; }
 
         /* Footer */
-        .footer { background: #fff; border-top: 1px solid #eaebf0; }
+        .footer { background: transparent; border-top: 1px solid rgba(168,140,255,0.15); }
+        .footer .copyright { color: var(--il-text-faint) !important; }
 
         /* Form controls */
         .form-control, .form-select {
-            border-color: #e0e0ea !important;
-            border-radius: 8px !important;
+            background: rgba(255,255,255,0.05) !important;
+            border-color: rgba(168,140,255,0.3) !important;
+            border-radius: 10px !important;
             font-size: 13px !important;
-            color: #1a1a2e !important;
+            color: #fff !important;
         }
+        .form-control::placeholder { color: var(--il-text-faint) !important; }
         .form-control:focus, .form-select:focus {
-            border-color: #5867dd !important;
-            box-shadow: 0 0 0 3px rgba(88,103,221,.1) !important;
+            background: rgba(255,255,255,0.08) !important;
+            border-color: var(--il-purple) !important;
+            box-shadow: 0 0 0 3px rgba(124,92,255,.18) !important;
+            color: #fff !important;
         }
+        .form-label { color: var(--il-text-soft) !important; }
+        select.form-select option { background: #1a1146; color: #fff; }
 
         /* Page header */
-        .page-header h3 { font-size: 20px !important; }
-        .breadcrumbs .nav-item a, .breadcrumbs .separator i { color: #aaa; font-size: 12px; }
-        .breadcrumbs .nav-item a:hover { color: #5867dd; }
+        .page-header h3 { font-size: 20px !important; color: #fff !important; }
+        .breadcrumbs .nav-item a, .breadcrumbs .separator i, .breadcrumbs .nav-home i { color: var(--il-text-faint); font-size: 12px; }
+        .breadcrumbs .nav-item a:hover { color: var(--il-purple-light); }
 
         /* Alert */
         .alert { border-radius: 10px !important; font-size: 13px; }
@@ -96,10 +151,15 @@
         /* SweetAlert confirm btn fix */
         .swal-button { border-radius: 50px !important; }
 
+        /* Generic text helpers used inline throughout content pages */
+        .text-muted { color: var(--il-text-faint) !important; }
+        h1, h2, h3, h4, h5, h6 { color: #fff; }
+        a { color: var(--il-purple-light); }
+
         /* ── Search bar ── */
         .search-bar-wrapper {
-            background: #f4f5f7;
-            border: 1.5px solid #e8e8f0;
+            background: rgba(255,255,255,0.05);
+            border: 1.5px solid rgba(168,140,255,0.25);
             border-radius: 50px;
             padding: 6px 16px;
             gap: 8px;
@@ -107,31 +167,37 @@
             transition: border-color .2s, box-shadow .2s;
         }
         .search-bar-wrapper:focus-within {
-            border-color: #5867dd;
-            background: #fff;
-            box-shadow: 0 0 0 3px rgba(88,103,221,.1);
+            border-color: var(--il-purple);
+            background: rgba(255,255,255,0.08);
+            box-shadow: 0 0 0 3px rgba(124,92,255,.15);
         }
         .search-bar-icon {
-            color: #bbb;
+            color: var(--il-text-faint);
             font-size: 12px;
             flex-shrink: 0;
         }
         .search-bar-wrapper:focus-within .search-bar-icon {
-            color: #5867dd;
+            color: var(--il-purple-light);
         }
         .search-bar-input {
             border: none !important;
             background: transparent !important;
             outline: none !important;
             font-size: 13px !important;
-            color: #1a1a2e !important;
+            color: #fff !important;
             width: 100%;
             box-shadow: none !important;
             padding: 0 !important;
             height: auto !important;
             border-radius: 0 !important;
         }
-        .search-bar-input::placeholder { color: #bbb; font-size: 13px; }
+        .search-bar-input::placeholder { color: var(--il-text-faint); font-size: 13px; }
+
+        /* Dropdown menu (navbar user menu) */
+        .dropdown-menu { background: #1a1146 !important; border: 1px solid rgba(168,140,255,0.25) !important; }
+        .dropdown-item { color: var(--il-text-soft) !important; }
+        .dropdown-item:hover { background: rgba(124,92,255,0.15) !important; color: #fff !important; }
+        .dropdown-divider { border-color: rgba(168,140,255,0.15) !important; }
     </style>
 
     @stack('styles')
@@ -145,8 +211,9 @@
         <div class="main-header">
             <div class="main-header-logo">
                 <div class="logo-header" data-background-color="dark">
-                    <a href="{{ url('/dashboard') }}" class="logo">
-                        <img src="{{ asset('assets/img/kaiadmin/logo_light.svg') }}" alt="InternLink" class="navbar-brand" height="20">
+                    <a href="{{ url('/dashboard') }}" class="logo il-brand" style="text-decoration:none;">
+                        <img src="{{ asset('assets/img/internlink-icon.png') }}" alt="InternLink" style="height:32px;width:auto;flex-shrink:0;">
+                        <span class="il-brand-text">Intern<span>Link</span></span>
                     </a>
                     <div class="nav-toggle">
                         <button class="btn btn-toggle toggle-sidebar"><i class="gg-menu-right"></i></button>

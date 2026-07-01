@@ -60,6 +60,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/timelogs', [StudentController::class, 'timelogs'])->name('student.timelogs');
         Route::post('/timelogs', [StudentController::class, 'submitTimeLog'])->name('student.timelogs.store');
         Route::delete('/timelogs/{id}', [StudentController::class, 'destroyTimeLog'])->name('student.timelogs.destroy');
+        Route::patch('/timelogs/{id}/timeout', [StudentController::class, 'updateTimeOut'])->name('student.timelogs.timeout');
 
         Route::get('/profile', [StudentController::class, 'profile'])->name('student.profile');
         Route::put('/profile', [StudentController::class, 'updateProfile'])->name('student.profile.update');

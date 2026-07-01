@@ -1,8 +1,9 @@
 <div class="sidebar" data-background-color="dark">
     <div class="sidebar-logo">
         <div class="logo-header" data-background-color="dark">
-            <a href="{{ url('/dashboard') }}" class="logo">
-                <img src="{{ asset('assets/img/kaiadmin/logo_light.svg') }}" alt="InternLink" class="navbar-brand" height="20">
+            <a href="{{ url('/dashboard') }}" class="logo il-brand" style="text-decoration:none;">
+                <img src="{{ asset('assets/img/internlink-icon.png') }}" alt="InternLink" style="height:32px;width:auto;flex-shrink:0;">
+                <span class="il-brand-text">Intern<span>Link</span></span>
             </a>
             <div class="nav-toggle">
                 <button class="btn btn-toggle toggle-sidebar"><i class="gg-menu-right"></i></button>

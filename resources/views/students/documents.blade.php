@@ -22,20 +22,20 @@
         <div class="position-relative" style="flex-shrink:0;">
             <img src="{{ Auth::user()->profile_photo_path ? asset('storage/' . Auth::user()->profile_photo_path) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) . '&background=5867dd&color=fff&size=80' }}"
                  alt="Profile Photo"
-                 style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid #eaebf0;">
+                 style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid rgba(168,140,255,0.25);">
             <form action="{{ route('profile.photo.update') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <label for="studentPhotoInput"
-                       style="position:absolute;bottom:0;right:0;width:24px;height:24px;border-radius:50%;background:#5867dd;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid #fff;">
+                       style="position:absolute;bottom:0;right:0;width:24px;height:24px;border-radius:50%;background:#7c5cff;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid #fff;">
                     <i class="fas fa-camera" style="font-size:9px;"></i>
                 </label>
                 <input type="file" id="studentPhotoInput" name="profile_photo" class="d-none" onchange="this.form.submit()">
             </form>
         </div>
         <div>
-            <div class="fw-bold" style="font-size:15px;color:#1a1a2e;">{{ Auth::user()->name }}</div>
-            <div style="font-size:12px;color:#aaa;margin-top:2px;">{{ Auth::user()->email }}</div>
-            <div style="font-size:11px;color:#aaa;margin-top:4px;">
+            <div class="fw-bold" style="font-size:15px;color:#ffffff;">{{ Auth::user()->name }}</div>
+            <div style="font-size:12px;color:rgba(220,210,255,0.45);margin-top:2px;">{{ Auth::user()->email }}</div>
+            <div style="font-size:11px;color:rgba(220,210,255,0.45);margin-top:4px;">
                 <i class="fas fa-camera me-1"></i> Click the camera icon to update your formal profile photo
             </div>
         </div>
@@ -68,8 +68,8 @@
     <div class="col-md-5">
         <div class="card card-round h-100">
             <div class="card-header d-flex align-items-center gap-2">
-                <span style="width:32px;height:32px;border-radius:8px;background:rgba(88,103,221,.12);display:flex;align-items:center;justify-content:center;">
-                    <i class="fas fa-cloud-upload-alt" style="color:#5867dd;font-size:15px;"></i>
+                <span style="width:32px;height:32px;border-radius:8px;background:rgba(124,92,255,.12);display:flex;align-items:center;justify-content:center;">
+                    <i class="fas fa-cloud-upload-alt" style="color:#7c5cff;font-size:15px;"></i>
                 </span>
                 <span class="card-title mb-0">Upload Control</span>
             </div>
@@ -78,7 +78,7 @@
                     @csrf
 
                     <div class="mb-3">
-                        <label class="form-label fw-semibold" style="font-size:12px;color:#555;">Document Classification</label>
+                        <label class="form-label fw-semibold" style="font-size:12px;color:rgba(220,210,255,0.65);">Document Classification</label>
                         <select name="document_type" class="form-select" style="height:40px;" required>
                             <option value="" disabled selected>Choose type…</option>
                             <option value="Resume">Resume / CV</option>
@@ -88,11 +88,11 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-semibold" style="font-size:12px;color:#555;">Select File</label>
+                        <label class="form-label fw-semibold" style="font-size:12px;color:rgba(220,210,255,0.65);">Select File</label>
                         <div class="doc-dropzone position-relative text-center p-4" id="doc-drop-area">
-                            <i class="fas fa-file-upload fs-2 mb-2 d-block" id="doc-icon" style="color:#ccc;"></i>
-                            <span id="doc-file-text" style="font-size:13px;color:#aaa;">Click to attach file</span>
-                            <div style="font-size:11px;color:#bbb;margin-top:4px;">PDF, DOC, DOCX — up to 10 MB</div>
+                            <i class="fas fa-file-upload fs-2 mb-2 d-block" id="doc-icon" style="color:rgba(220,210,255,0.35);"></i>
+                            <span id="doc-file-text" style="font-size:13px;color:rgba(220,210,255,0.45);">Click to attach file</span>
+                            <div style="font-size:11px;color:rgba(220,210,255,0.4);margin-top:4px;">PDF, DOC, DOCX — up to 10 MB</div>
                             <input type="file" name="document" id="doc-file-input"
                                    class="position-absolute top-0 start-0 w-100 h-100 opacity-0"
                                    style="cursor:pointer;" accept=".pdf,.doc,.docx" required />
@@ -115,7 +115,7 @@
                     <i class="fas fa-folder-open" style="color:#28c76f;font-size:15px;"></i>
                 </span>
                 <span class="card-title mb-0">Document Registry</span>
-                <span class="ms-auto badge rounded-pill border" style="background:#f4f5f7;color:#555;font-size:11px;padding:5px 12px;">
+                <span class="ms-auto badge rounded-pill border" style="background:rgba(255,255,255,0.05);color:rgba(220,210,255,0.65);font-size:11px;padding:5px 12px;">
                     {{ $documents->count() }} {{ Str::plural('file', $documents->count()) }}
                 </span>
             </div>
@@ -123,10 +123,10 @@
 
                 @if ($documents->isEmpty())
                     <div class="text-center py-5 px-3">
-                        <div style="width:60px;height:60px;border-radius:50%;background:#f4f5f7;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;">
-                            <i class="fas fa-file-invoice" style="font-size:22px;color:#ccc;"></i>
+                        <div style="width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,0.05);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;">
+                            <i class="fas fa-file-invoice" style="font-size:22px;color:rgba(220,210,255,0.35);"></i>
                         </div>
-                        <h6 class="fw-bold mb-1" style="color:#1a1a2e;">No uploaded records yet</h6>
+                        <h6 class="fw-bold mb-1" style="color:#ffffff;">No uploaded records yet</h6>
                         <p class="text-muted mb-0" style="font-size:13px;">Use the upload tool on the left to store your required OJT forms.</p>
                     </div>
                 @else
@@ -155,7 +155,7 @@
                                     <td class="py-3">
                                         <div class="d-flex align-items-center gap-2">
                                             <i class="fas fa-file-pdf" style="color:#e34c3a;font-size:16px;flex-shrink:0;"></i>
-                                            <span class="text-truncate" style="max-width:200px;font-size:13px;color:#555;" title="{{ $document->filename }}">
+                                            <span class="text-truncate" style="max-width:200px;font-size:13px;color:rgba(220,210,255,0.65);" title="{{ $document->filename }}">
                                                 {{ $document->filename }}
                                             </span>
                                         </div>
@@ -166,7 +166,7 @@
                                            target="_blank"
                                            class="btn btn-sm btn-icon btn-link"
                                            title="View document"
-                                           style="color:#5867dd;">
+                                           style="color:#7c5cff;">
                                             <i class="fas fa-external-link-alt"></i>
                                         </a>
 
@@ -202,19 +202,19 @@
 
 <style>
     .doc-dropzone {
-        border: 1.5px dashed #dde0ea;
+        border: 1.5px dashed rgba(168,140,255,0.3);
         border-radius: 10px;
-        background: #fafbfc;
+        background: rgba(255,255,255,0.04);
         transition: border-color .15s, background .15s;
         cursor: pointer;
     }
     .doc-dropzone:hover,
     .doc-dropzone.drag-over {
-        border-color: #5867dd;
-        background: rgba(88,103,221,.04);
+        border-color: #7c5cff;
+        background: rgba(124,92,255,.04);
     }
     .doc-dropzone:hover #doc-icon,
-    .doc-dropzone.drag-over #doc-icon { color: #5867dd !important; }
+    .doc-dropzone.drag-over #doc-icon { color: #7c5cff !important; }
 </style>
 @endsection
 
@@ -230,10 +230,10 @@ document.addEventListener('DOMContentLoaded', function () {
         input.addEventListener('change', function () {
             if (this.files.length) {
                 text.textContent = this.files[0].name;
-                text.style.color = '#5867dd';
+                text.style.color = '#7c5cff';
                 text.style.fontWeight = '600';
                 icon.className = 'fas fa-file-check fs-2 mb-2 d-block';
-                icon.style.color = '#5867dd';
+                icon.style.color = '#7c5cff';
             }
         });
     }
