@@ -24,7 +24,7 @@
     <style>
         .auth-page {
             min-height: 100vh;
-            background: linear-gradient(135deg, #1d4ed8 0%, #0f172a 100%);
+            background: radial-gradient(circle at 20% 20%, #2a1f6e 0%, #1a1146 45%, #0e0a2e 100%);
             color: #f8fafc;
         }
         .auth-card {
@@ -47,12 +47,12 @@
     </style>
 </head>
 <body class="auth-page d-flex align-items-center">
-    <div class="position-absolute top-0 end-0 p-3">
+    <div class="position-absolute top-0 end-0 p-3" style="z-index:5;">
         <a href="{{ url('/dashboard') }}" class="btn btn-sm btn-light">
             <i class="fas fa-arrow-left"></i> Back to Dashboard
         </a>
     </div>
-    <div class="container py-5">
+    <div class="w-100">
         @yield('content')
     </div>
 
