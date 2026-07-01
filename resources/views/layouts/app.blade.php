@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/kaiadmin.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}">
 
+<<<<<<< HEAD
     {{-- Global UI overrides — InternLink dark/purple bot theme --}}
     <style>
         :root {
@@ -198,17 +199,24 @@
         .dropdown-item { color: var(--il-text-soft) !important; }
         .dropdown-item:hover { background: rgba(124,92,255,0.15) !important; color: #fff !important; }
         .dropdown-divider { border-color: rgba(168,140,255,0.15) !important; }
+=======
+    <style>
+        /* ... (Keep your existing styles here) ... */
+>>>>>>> refs/remotes/origin/main
     </style>
-
     @stack('styles')
 </head>
 <body>
 <div class="wrapper">
 
-    @include('layouts.sidebar')
+    {{-- Safety check for sidebar --}}
+    @if(view()->exists('layouts.sidebar'))
+        @include('layouts.sidebar')
+    @endif
 
     <div class="main-panel">
         <div class="main-header">
+<<<<<<< HEAD
             <div class="main-header-logo">
                 <div class="logo-header" data-background-color="dark">
                     <a href="{{ url('/dashboard') }}" class="logo il-brand" style="text-decoration:none;">
@@ -223,76 +231,45 @@
                 </div>
             </div>
 
+=======
+>>>>>>> refs/remotes/origin/main
             <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
                 <div class="container-fluid">
-                    {{-- Search --}}
-                    <nav class="navbar-left navbar-expand-lg navbar-form nav-search p-0 d-none d-lg-flex">
-                        <div class="search-bar-wrapper d-flex align-items-center">
-                            <i class="fa fa-search search-bar-icon"></i>
-                            <input type="text" placeholder="Search anything..." class="search-bar-input" id="globalSearch" />
-                        </div>
-                    </nav>
-
                     <ul class="navbar-nav ms-auto align-items-center gap-2">
                         @auth
-                        {{-- User dropdown --}}
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle d-flex align-items-center gap-2 pe-0"
                                data-bs-toggle="dropdown" aria-expanded="false">
-                                {{-- Avatar: show photo if exists, else initials --}}
+                                {{-- Use null-coalescing operators to prevent crashes --}}
                                 @if(Auth::user()->profile_photo_path)
                                     <img src="{{ asset('storage/' . Auth::user()->profile_photo_path) }}"
-                                         alt="Avatar"
-                                         style="width:30px;height:30px;border-radius:50%;object-fit:cover;border:2px solid #eaebf0;">
+                                         alt="Avatar" style="width:30px;height:30px;border-radius:50%;object-fit:cover;border:2px solid #eaebf0;">
                                 @else
                                     <div style="width:30px;height:30px;border-radius:50%;background:#5867dd;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;">
-                                        {{ strtoupper(substr(Auth::user()->name,0,2)) }}
+                                        {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 2)) }}
                                     </div>
                                 @endif
-                                <span style="font-size:13px;font-weight:500;">{{ Auth::user()->name }}</span>
-                                <span class="badge ms-1" style="background:rgba(88,103,221,.15);color:#5867dd;font-size:10px;">{{ session('role') }}</span>
+                                <span style="font-size:13px;font-weight:500;">{{ Auth::user()->name ?? 'User' }}</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2" style="border-radius:10px;min-width:220px;">
-                                {{-- User info header --}}
                                 <li class="px-3 py-2 d-flex align-items-center gap-2">
-                                    @if(Auth::user()->profile_photo_path)
-                                        <img src="{{ asset('storage/' . Auth::user()->profile_photo_path) }}"
-                                             alt="Avatar"
-                                             style="width:38px;height:38px;border-radius:50%;object-fit:cover;flex-shrink:0;">
-                                    @else
-                                        <div style="width:38px;height:38px;border-radius:50%;background:#5867dd;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;flex-shrink:0;">
-                                            {{ strtoupper(substr(Auth::user()->name,0,2)) }}
-                                        </div>
-                                    @endif
-                                    <div>
-                                        <div style="font-size:13px;font-weight:600;color:#1a1a2e;">{{ Auth::user()->name }}</div>
-                                        <div style="font-size:11px;color:#aaa;">{{ Auth::user()->email }}</div>
-                                    </div>
+                                    <div style="font-size:13px;font-weight:600;color:#1a1a2e;">{{ Auth::user()->name ?? 'User' }}</div>
                                 </li>
                                 <li><hr class="dropdown-divider my-1"></li>
-                                {{-- My Profile link --}}
                                 <li>
-                                    <a href="{{ route('profile.edit') }}" class="dropdown-item d-flex align-items-center gap-2" style="font-size:13px;color:#1a1a2e;">
-                                        <i class="fas fa-user-circle me-1" style="color:#5867dd;width:16px;"></i> My Profile
+                                    <a href="{{ route('profile.edit') }}" class="dropdown-item d-flex align-items-center gap-2">
+                                        <i class="fas fa-user-circle" style="color:#5867dd;"></i> My Profile
                                     </a>
                                 </li>
-                                <li><hr class="dropdown-divider my-1"></li>
-                                {{-- Logout --}}
                                 <li>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
-                                        <button type="submit" class="dropdown-item d-flex align-items-center gap-2 text-danger" style="font-size:13px;">
-                                            <i class="fas fa-sign-out-alt me-1" style="width:16px;"></i> Logout
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="fas fa-sign-out-alt"></i> Logout
                                         </button>
                                     </form>
                                 </li>
                             </ul>
-                        </li>
-                        @else
-                        <li class="nav-item">
-                            <a href="{{ url('/login') }}" class="btn btn-sm btn-primary btn-round px-3">
-                                <i class="fas fa-sign-in-alt me-1"></i> Login
-                            </a>
                         </li>
                         @endauth
                     </ul>
@@ -305,32 +282,13 @@
                 @yield('content')
             </div>
         </div>
-
-        <footer class="footer">
-            <div class="container-fluid d-flex justify-content-between align-items-center py-2">
-                <div class="copyright" style="font-size:12px;color:#aaa;">
-                    &copy; 2026 InternLink &mdash; made with <i class="fa fa-heart text-danger mx-1"></i>
-                </div>
-            </div>
-        </footer>
     </div>
 </div>
 
 <script src="{{ asset('assets/js/core/jquery-3.7.1.min.js') }}"></script>
 <script src="{{ asset('assets/js/core/popper.min.js') }}"></script>
 <script src="{{ asset('assets/js/core/bootstrap.min.js') }}"></script>
-<script src="{{ asset('assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}"></script>
-<script src="{{ asset('assets/js/plugin/moment/moment.min.js') }}"></script>
-<script src="{{ asset('assets/js/plugin/chart.js/chart.min.js') }}"></script>
-<script src="{{ asset('assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js') }}"></script>
-<script src="{{ asset('assets/js/plugin/chart-circle/circles.min.js') }}"></script>
-<script src="{{ asset('assets/js/plugin/datatables/datatables.min.js') }}"></script>
-<script src="{{ asset('assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
-<script src="{{ asset('assets/js/plugin/jsvectormap/jsvectormap.min.js') }}"></script>
-<script src="{{ asset('assets/js/plugin/jsvectormap/world.js') }}"></script>
-<script src="{{ asset('assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
 <script src="{{ asset('assets/js/kaiadmin.min.js') }}"></script>
-
 @stack('scripts')
 </body>
 </html>

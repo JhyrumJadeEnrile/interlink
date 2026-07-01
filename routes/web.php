@@ -9,9 +9,6 @@ use App\Http\Controllers\SupervisorProfileController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +39,14 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware(['auth'])->group(function () {
 
     Route::get('/dashboard', fn () => view('admin.dashboard'))->name('admin.dashboard');
+
+    // --- Added Profile Redirect Route (FIXES THE ERROR) ---
+    Route::get('/profile', function () {
+        $user = auth()->user();
+        if ($user->role === 'student') return redirect()->route('student.profile');
+        if ($user->role === 'supervisor') return redirect()->route('supervisor.profile.edit');
+        return redirect()->route('admin.dashboard');
+    })->name('profile.edit');
 
     // Admin
     Route::get('/admin/students', [AdminController::class, 'studentAssignments'])->name('admin.student-assignments');
@@ -93,19 +98,6 @@ Route::middleware(['auth'])->group(function () {
     // --- Management & Utility ---
     Route::get('/management/students/create', [AdminController::class, 'createStudent'])->name('students.create');
     Route::post('/management/students/store', [AdminController::class, 'storeStudent'])->name('students.store');
-
-    Route::post('/profile/photo/update', function (Request $request) {
-        $request->validate(['profile_photo' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048']);
-        $user = Auth::user();
-        if ($user->profile_photo_path) Storage::disk('public')->delete($user->profile_photo_path);
-        $path = $request->file('profile_photo')->store('profile_photos', 'public');
-        $user->update(['profile_photo_path' => $path]);
-        return back()->with('success', 'Formal profile photo updated successfully.');
-    })->name('profile.photo.update');
-
-    // Profile (all roles)
-    Route::get('/profile', [StudentController::class, 'profile'])->name('profile.edit');
-    Route::put('/profile', [StudentController::class, 'updateProfile'])->name('profile.update');
 
     // Reports
     Route::get('/reports/final', [ReportController::class, 'finalOjtReport'])->name('reports.final');
